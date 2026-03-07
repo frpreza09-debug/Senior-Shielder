@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SeniorShield | Pelindung WA & SMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+/* ═══════════ TOKENS ═══════════ */
+:root{
+  --cyan:#00f2ff;--indigo:#4f46e5;
+  --bg:#080e1c;--card:#0f1929;--deep:#0a1220;--surface:#1a2540;
+  --text:#e2e8f0;--muted:rgba(226,232,240,0.42);
+  --danger:#ff4d4d;--warn:#ffcc00;--ok:#00ff88;
+  --r:14px;--px:16px;--gap:14px;
+}
+@media(min-width:600px){:root{--px:28px;--gap:18px;}}
+@media(min-width:900px){:root{--px:56px;--gap:22px;}}
+@media(min-width:1280px){:root{--px:96px;}}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;overflow-x:clip;-webkit-tap-highlight-color:transparent;}
+#root-clip{max-width:100vw;overflow-x:clip;}
+.hidden{display:none!important;}
+
+/* ═══════════ SHARED HEADER ═══════════ */
+.site-header{display:flex;justify-content:space-between;align-items:center;padding:14px var(--px);background:#080e1c;border-bottom:1px solid rgba(0,242,255,.1);position:sticky;top:0;z-index:400;}
+.logo{font-size:clamp(14px,4.5vw,20px);font-weight:800;color:var(--cyan);letter-spacing:2px;font-family:'Syne',sans-serif;flex:1;min-width:0;}
+.nav-btn{background:none;border:1.5px solid var(--cyan);color:var(--cyan);padding:7px 18px;border-radius:20px;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:600;font-size:13px;transition:.2s;white-space:nowrap;min-height:38px;}
+.nav-btn:hover{background:var(--cyan);color:#080e1c;}
+
+/* ═══════════ HERO ═══════════ */
+.hero{min-height:calc(100svh - 58px);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;background:radial-gradient(ellipse 80% 60% at 50% 40%,#0d1f3c,#080e1c);padding:40px var(--px);position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 50%,rgba(0,242,255,.04),transparent 50%),radial-gradient(circle at 80% 50%,rgba(79,70,229,.05),transparent 50%);pointer-events:none;}
+.hero h1{font-size:clamp(24px,7vw,58px);margin-bottom:14px;font-weight:800;font-family:'Syne',sans-serif;line-height:1.1;background:linear-gradient(90deg,var(--cyan),var(--indigo));-webkit-background-clip:text;color:transparent;}
+.hero p{font-size:clamp(12px,3.5vw,16px);opacity:.6;margin-bottom:32px;font-family:'JetBrains Mono',monospace;}
+.hero-btn{padding:13px 36px;border:none;border-radius:30px;background:linear-gradient(90deg,var(--cyan),var(--indigo));font-weight:700;cursor:pointer;font-size:14px;font-family:'Poppins',sans-serif;transition:.2s;box-shadow:0 0 30px rgba(0,242,255,.25);color:#080e1c;min-height:48px;}
+.hero-btn:hover{transform:scale(1.04);}
+
+/* ═══════════ LOGIN ═══════════ */
+#loginPage{display:flex;align-items:center;justify-content:center;min-height:100svh;background:var(--bg);padding:20px var(--px);}
+.login-box{background:var(--card);padding:clamp(22px,5vw,40px) clamp(18px,5vw,36px);border-radius:20px;width:100%;max-width:400px;box-shadow:0 0 50px rgba(0,242,255,.1);border:1px solid rgba(0,242,255,.1);}
+.login-title{text-align:center;margin-bottom:22px;font-weight:800;color:var(--cyan);font-family:'Syne',sans-serif;font-size:clamp(16px,4vw,20px);letter-spacing:1px;}
+.tab-bar{display:flex;gap:8px;margin-bottom:22px;}
+.tab-btn{flex:1;padding:10px 6px;border:1.5px solid rgba(0,242,255,.3);background:transparent;color:var(--cyan);border-radius:10px;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:600;font-size:clamp(12px,3.5vw,13px);transition:.2s;min-height:44px;}
+.tab-btn.active{background:var(--cyan);color:#080e1c;border-color:var(--cyan);}
+.field{width:100%;padding:13px 14px;margin:7px 0;border:1.5px solid var(--surface);border-radius:10px;background:var(--surface);color:var(--text);font-family:'Poppins',sans-serif;font-size:15px;outline:none;transition:.2s;min-height:50px;}
+.field:focus{border-color:var(--cyan);}
+.btn-login{width:100%;background:linear-gradient(90deg,var(--cyan),var(--indigo));border:none;padding:14px;border-radius:12px;margin-top:12px;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;color:#080e1c;min-height:50px;transition:.2s;}
+.btn-login:hover{opacity:.88;}
+/* NFC */
+.nfc-wrapper{text-align:center;padding:8px 0;}
+.nfc-badge{display:inline-block;padding:5px 14px;border-radius:20px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;margin-bottom:16px;background:var(--surface);color:var(--muted);border:1px solid var(--surface);transition:.4s;}
+.nfc-badge.scanning{background:rgba(0,242,255,.1);color:var(--cyan);border-color:var(--cyan);}
+.nfc-badge.success{background:rgba(0,255,136,.1);color:var(--ok);border-color:var(--ok);}
+.nfc-badge.error{background:rgba(255,77,77,.1);color:var(--danger);border-color:var(--danger);}
+.nfc-rings{position:relative;width:110px;height:110px;margin:0 auto 18px;}
+.nfc-ring{position:absolute;border-radius:50%;border:2px solid transparent;}
+.nfc-ring:nth-child(1){width:110px;height:110px;top:0;left:0;border-color:rgba(0,242,255,.15);}
+.nfc-ring:nth-child(2){width:80px;height:80px;top:15px;left:15px;border-color:rgba(0,242,255,.25);}
+.nfc-ring:nth-child(3){width:50px;height:50px;top:30px;left:30px;border-color:rgba(0,242,255,.4);}
+.nfc-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:24px;}
+.nfc-rings.scanning .nfc-ring{animation:ringPulse 1.6s ease-in-out infinite;}
+.nfc-rings.scanning .nfc-ring:nth-child(2){animation-delay:.2s;}
+.nfc-rings.scanning .nfc-ring:nth-child(3){animation-delay:.4s;}
+.nfc-rings.success .nfc-ring{border-color:var(--ok)!important;opacity:.5;}
+.nfc-rings.error .nfc-ring{border-color:var(--danger)!important;opacity:.5;}
+@keyframes ringPulse{0%,100%{transform:scale(1);opacity:.3;}50%{transform:scale(1.1);opacity:1;}}
+.nfc-uid{background:var(--surface);border-radius:10px;padding:9px 13px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin:10px 0;word-break:break-all;text-align:center;border:1px solid rgba(255,255,255,.05);transition:.3s;}
+.nfc-uid.found{color:var(--cyan);border-color:rgba(0,242,255,.3);}
+.nfc-info{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:12px;line-height:1.7;}
+.nfc-info a{color:var(--cyan);text-decoration:none;}
+.btn-nfc{background:var(--surface);border:1.5px solid var(--cyan);color:var(--cyan);padding:11px 20px;border-radius:12px;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:600;font-size:14px;transition:.2s;min-height:46px;width:100%;}
+.btn-nfc:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ═══════════ DASHBOARD ═══════════ */
+#dashboard{display:flex;flex-direction:column;min-height:100svh;animation:fadeUp .4s ease;}
+.dash-header{display:flex;justify-content:space-between;align-items:center;padding:0 var(--px);background:#0d1829;height:56px;border-bottom:1px solid rgba(0,242,255,.08);position:sticky;top:0;z-index:400;gap:10px;flex-shrink:0;}
+.dash-logo{font-weight:800;color:var(--cyan);font-family:'Syne',sans-serif;font-size:clamp(10px,2.8vw,15px);display:flex;align-items:center;gap:8px;min-width:0;flex:1;letter-spacing:.3px;}
+.dash-right{display:flex;align-items:center;gap:7px;flex-shrink:0;}
+.dash-btn{background:none;border:1.5px solid rgba(0,242,255,.4);color:var(--cyan);padding:6px 12px;border-radius:16px;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:600;font-size:12px;transition:.2s;white-space:nowrap;min-height:34px;}
+.dash-btn:hover{background:var(--cyan);color:#080e1c;border-color:var(--cyan);}
+.dash-body{flex:1;overflow-y:auto;padding:var(--gap) var(--px) calc(var(--gap) + env(safe-area-inset-bottom));}
+
+/* ═══════════ CONNECTION BAR ═══════════ */
+.conn-bar{background:var(--deep);border:1px solid rgba(0,242,255,.12);border-radius:var(--r);padding:12px 14px;margin-bottom:var(--gap);}
+/* Baris 1: status */
+.conn-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.conn-dot{width:9px;height:9px;border-radius:50%;background:#333;flex-shrink:0;transition:.4s;}
+.conn-dot.connecting{background:var(--warn);animation:blink 1s infinite;}
+.conn-dot.connected{background:var(--ok);box-shadow:0 0 8px var(--ok);animation:blink 2s infinite;}
+.conn-dot.error{background:var(--danger);box-shadow:0 0 6px var(--danger);}
+.conn-dot.simulating{background:var(--cyan);box-shadow:0 0 8px var(--cyan);animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+.conn-text{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.conn-count{background:var(--surface);border-radius:8px;padding:3px 9px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);white-space:nowrap;flex-shrink:0;}
+/* Baris 2: tombol */
+.conn-btns{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;}
+.cbtn{padding:9px 4px;border-radius:10px;border:1.5px solid;cursor:pointer;font-family:'Poppins',sans-serif;font-size:10px;font-weight:700;transition:.2s;min-height:38px;white-space:nowrap;text-align:center;display:flex;align-items:center;justify-content:center;gap:3px;flex-direction:column;line-height:1.2;}
+.cbtn .cbtn-icon{font-size:14px;line-height:1;}
+.cbtn .cbtn-lbl{font-size:9px;letter-spacing:.3px;}
+.cbtn-on{border-color:var(--ok);color:var(--ok);background:rgba(0,255,136,.06);}
+.cbtn-off{border-color:var(--danger);color:var(--danger);background:rgba(255,77,77,.06);}
+.cbtn-uji{border-color:var(--warn);color:var(--warn);background:rgba(255,204,0,.06);}
+@media(min-width:500px){
+  .conn-bar{display:flex;align-items:center;gap:12px;padding:11px 16px;}
+  .conn-top{margin-bottom:0;flex:1;min-width:0;}
+  .conn-btns{display:flex;gap:6px;flex-shrink:0;}
+  .cbtn{flex-direction:row;padding:7px 11px;min-height:34px;font-size:11px;}
+  .cbtn .cbtn-icon{font-size:12px;}
+  .cbtn .cbtn-lbl{font-size:11px;letter-spacing:0;}
+}
+.cbtn:hover{opacity:.7;}
+
+/* ═══════════ API PANEL ═══════════ */
+.api-panel{background:var(--deep);border:1px solid rgba(0,242,255,.18);border-radius:var(--r);padding:18px;margin-bottom:var(--gap);animation:slideDown .25s ease;}
+@keyframes slideDown{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+.api-panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px;flex-wrap:wrap;}
+.api-panel h3{color:var(--cyan);font-size:13px;font-weight:700;}
+.tut-link{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(90deg,rgba(0,242,255,.12),rgba(79,70,229,.12));border:1px solid rgba(0,242,255,.25);border-radius:20px;color:var(--cyan);font-size:12px;font-weight:600;font-family:'Poppins',sans-serif;padding:6px 14px;cursor:pointer;transition:.2s;white-space:nowrap;}
+.tut-link:hover{background:linear-gradient(90deg,rgba(0,242,255,.22),rgba(79,70,229,.22));}
+.api-grid{display:grid;grid-template-columns:1fr;gap:10px;}
+@media(min-width:600px){.api-grid{grid-template-columns:1fr 1fr;}}
+.ag-full{grid-column:1/-1;}
+.api-group{display:flex;flex-direction:column;gap:4px;}
+.alabel{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.6px;}
+.ainput,.aselect{width:100%;padding:9px 12px;background:var(--surface);border:1px solid rgba(0,242,255,.12);border-radius:8px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;transition:.2s;min-height:38px;}
+.ainput:focus,.aselect:focus{border-color:var(--cyan);}
+.api-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.apibtn{padding:9px 16px;border-radius:9px;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:700;font-size:12px;transition:.2s;min-height:38px;border:1.5px solid;}
+.apibtn-save{background:var(--cyan);border-color:var(--cyan);color:#080e1c;}
+.apibtn-ping{background:transparent;border-color:var(--indigo);color:#a5b4fc;}
+.apibtn:hover{opacity:.8;}
+.api-status-line{margin-top:10px;font-size:10px;font-family:'JetBrains Mono',monospace;padding:7px 12px;border-radius:8px;background:var(--surface);border:1px solid rgba(255,255,255,.04);color:var(--muted);}
+
+/* ═══════════ DEMO PHONE WIDGET ═══════════ */
+.demo-section{margin-top:20px;border-top:1px solid rgba(0,242,255,.1);padding-top:16px;}
+.demo-title{font-size:12px;font-weight:700;color:var(--cyan);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.demo-title span{background:var(--warn);color:#080e1c;font-size:9px;font-weight:800;padding:2px 7px;border-radius:8px;}
+.demo-row{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;}
+.phone-mock{
+  flex-shrink:0;width:160px;
+  background:#0a0f1c;border:2px solid rgba(0,242,255,.2);
+  border-radius:22px;padding:10px 8px 14px;
+  box-shadow:0 0 24px rgba(0,242,255,.07);
+  position:relative;
+}
+.phone-notch{width:40px;height:6px;background:rgba(255,255,255,.06);border-radius:3px;margin:0 auto 10px;}
+.phone-screen{min-height:120px;position:relative;}
+.sms-bubble{
+  background:rgba(255,255,255,.06);border-radius:10px;padding:8px 10px;
+  font-size:9.5px;line-height:1.5;color:var(--text);margin-bottom:6px;
+  border-left:3px solid rgba(255,255,255,.15);
+  animation:bubbleIn .35s ease;
+  position:relative;
+}
+@keyframes bubbleIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.sms-bubble.danger{border-left-color:var(--danger);background:rgba(255,77,77,.08);}
+.sms-bubble.warning{border-left-color:var(--warn);background:rgba(255,204,0,.07);}
+.sms-bubble.safe{border-left-color:var(--ok);background:rgba(0,255,136,.06);}
+.sms-sender{font-size:8px;font-weight:700;color:var(--muted);margin-bottom:3px;}
+.sms-scanning{display:flex;align-items:center;gap:5px;font-size:8px;color:var(--cyan);margin-top:4px;}
+.sms-dots{display:flex;gap:2px;}
+.sms-dot{width:4px;height:4px;border-radius:50%;background:var(--cyan);animation:dotBounce .7s ease-in-out infinite;}
+.sms-dot:nth-child(2){animation-delay:.15s;}
+.sms-dot:nth-child(3){animation-delay:.3s;}
+@keyframes dotBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
+.sms-result{font-size:8px;font-weight:700;margin-top:4px;padding:2px 6px;border-radius:6px;display:inline-block;}
+.sms-result.danger{background:rgba(255,77,77,.2);color:var(--danger);}
+.sms-result.safe{background:rgba(0,255,136,.15);color:var(--ok);}
+.phone-footer{text-align:center;font-size:8px;color:var(--muted);margin-top:6px;font-family:'JetBrains Mono',monospace;}
+
+.demo-controls{flex:1;min-width:200px;}
+.demo-desc{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:12px;}
+.demo-msg-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+.demo-msg-item{
+  display:flex;align-items:center;gap:8px;padding:7px 10px;
+  border-radius:8px;background:var(--surface);
+  border:1px solid rgba(255,255,255,.04);cursor:pointer;
+  transition:.2s;font-size:11px;
+}
+.demo-msg-item:hover{border-color:rgba(0,242,255,.2);}
+.demo-msg-item.active{border-color:var(--cyan);background:rgba(0,242,255,.06);}
+.demo-msg-badge{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;}
+.demo-msg-badge.danger{background:rgba(255,77,77,.2);}
+.demo-msg-badge.warning{background:rgba(255,204,0,.15);}
+.demo-msg-badge.safe{background:rgba(0,255,136,.12);}
+.demo-msg-text{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);}
+.demo-msg-label{font-size:9px;font-weight:700;flex-shrink:0;}
+.demo-msg-label.danger{color:var(--danger);}
+.demo-msg-label.warning{color:var(--warn);}
+.demo-msg-label.safe{color:var(--ok);}
+.btn-demo{
+  width:100%;padding:11px;border:none;border-radius:10px;
+  background:linear-gradient(90deg,rgba(0,242,255,.15),rgba(79,70,229,.15));
+  border:1.5px solid rgba(0,242,255,.3);
+  color:var(--cyan);font-family:'Poppins',sans-serif;font-weight:700;
+  font-size:13px;cursor:pointer;transition:.2s;min-height:44px;
+}
+.btn-demo:hover{background:linear-gradient(90deg,rgba(0,242,255,.25),rgba(79,70,229,.25));}
+.btn-demo:disabled{opacity:.4;cursor:not-allowed;}
+.demo-progress{margin-top:8px;height:3px;background:var(--surface);border-radius:2px;overflow:hidden;}
+.demo-bar{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--indigo));transition:width .4s ease;border-radius:2px;}
+
+/* ═══════════ STATS / CARDS ═══════════ */
+.stats-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);margin-bottom:var(--gap);}
+.stat-pill{background:var(--deep);border:1px solid rgba(0,242,255,.07);border-radius:var(--r);padding:14px 8px;text-align:center;}
+.stat-pill .num{font-size:clamp(20px,6vw,34px);font-weight:800;font-family:'Syne',sans-serif;line-height:1;}
+.stat-pill .lbl{font-size:clamp(9px,2.4vw,11px);opacity:.5;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.stat-pill.high .num{color:var(--danger);}
+.stat-pill.med  .num{color:var(--warn);}
+.stat-pill.low  .num{color:var(--ok);}
+.wa-card{background:var(--deep);border:1px solid rgba(0,242,255,.07);border-radius:var(--r);padding:clamp(16px,4vw,24px);margin-bottom:var(--gap);}
+.wa-card h2{margin-bottom:12px;color:var(--cyan);font-size:clamp(13px,3.8vw,16px);font-weight:600;}
+.wa-card textarea{width:100%;height:clamp(88px,22vw,120px);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.06);background:#060d1a;color:white;font-family:'Poppins',sans-serif;font-size:clamp(12px,3.5vw,14px);resize:vertical;outline:none;transition:.2s;}
+.wa-card textarea:focus{border-color:rgba(0,242,255,.3);}
+.btn-scan{width:100%;margin-top:11px;padding:13px;background:var(--cyan);border:none;border-radius:12px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;font-size:14px;color:#080e1c;transition:.2s;min-height:48px;}
+.btn-scan:hover{box-shadow:0 0 22px rgba(0,242,255,.4);}
+.scan-bar{height:4px;margin-top:10px;border-radius:4px;overflow:hidden;background:var(--surface);}
+.scan-bar-inner{height:100%;width:0;border-radius:4px;background:linear-gradient(90deg,var(--cyan),var(--indigo));transition:width .5s ease;}
+.result-box{margin-top:12px;font-weight:700;font-size:clamp(12px,3.8vw,15px);line-height:1.5;}
+.risk-high{color:var(--danger);}.risk-medium{color:var(--warn);}.risk-low{color:var(--ok);}
+.wa-log{font-size:clamp(10px,2.8vw,12px);line-height:1.9;max-height:170px;overflow-y:auto;background:#060d1a;padding:12px;border-radius:10px;font-family:'JetBrains Mono',monospace;word-break:break-word;}
+.wa-card canvas{background:#060d1a;border-radius:10px;padding:8px;width:100%!important;}
+
+/* ═══════════ TUTORIAL — FULLSCREEN ═══════════ */
+#tutorialPage{position:fixed;left:0;right:0;top:0;bottom:0;z-index:9999;background:var(--bg);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;}
+
+.tut-header{display:flex;align-items:center;justify-content:space-between;padding:14px var(--px);background:#080e1c;border-bottom:1px solid rgba(0,242,255,.1);position:sticky;top:0;z-index:10;}
+.tut-header-left{display:flex;align-items:center;gap:12px;}
+.tut-title{font-family:'Syne',sans-serif;font-size:clamp(14px,4vw,18px);font-weight:800;color:var(--cyan);}
+.tut-mode-toggle{display:flex;gap:4px;background:var(--surface);border-radius:20px;padding:4px;}
+.tut-mode-btn{padding:5px 12px;border-radius:16px;border:none;font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:.2s;background:transparent;color:var(--muted);}
+.tut-mode-btn.active{background:var(--cyan);color:#080e1c;}
+.tut-close{background:none;border:1.5px solid rgba(255,255,255,.12);color:var(--muted);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:.2s;}
+.tut-close:hover{border-color:var(--danger);color:var(--danger);}
+
+/* WIZARD STEPS (mode awam) */
+.tut-wizard{padding:var(--gap) var(--px) 80px;max-width:700px;margin:0 auto;}
+.wizard-progress{display:flex;align-items:center;gap:0;margin-bottom:32px;overflow-x:auto;padding:4px 0;}
+.wz-step{display:flex;align-items:center;gap:0;flex-shrink:0;}
+.wz-dot{width:32px;height:32px;border-radius:50%;border:2px solid rgba(0,242,255,.2);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--muted);transition:.4s;cursor:pointer;font-family:'Syne',sans-serif;flex-shrink:0;}
+.wz-dot.done{background:var(--ok);border-color:var(--ok);color:#080e1c;}
+.wz-dot.active{background:linear-gradient(135deg,var(--cyan),var(--indigo));border-color:transparent;color:#080e1c;box-shadow:0 0 14px rgba(0,242,255,.4);}
+.wz-line{width:clamp(20px,6vw,48px);height:2px;background:rgba(0,242,255,.12);flex-shrink:0;}
+.wz-line.done{background:var(--ok);}
+
+.wizard-card{background:var(--card);border-radius:20px;border:1px solid rgba(0,242,255,.1);overflow:hidden;}
+.wz-slide{display:none;animation:fadeUp .35s ease;}
+.wz-slide.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+.wz-emoji{text-align:center;font-size:clamp(60px,14vw,80px);padding:32px 20px 8px;line-height:1;}
+.wz-main-title{text-align:center;font-family:'Syne',sans-serif;font-size:clamp(22px,5.5vw,30px);font-weight:800;color:var(--text);padding:0 20px 10px;line-height:1.2;}
+.wz-main-title .hl{background:linear-gradient(90deg,var(--cyan),var(--indigo));-webkit-background-clip:text;color:transparent;}
+.wz-main-desc{text-align:center;font-size:clamp(15px,3.8vw,17px);color:var(--muted);padding:0 24px 24px;line-height:1.8;}
+
+/* checklist steps inside wizard */
+.wz-checklist{padding:0 20px 20px;display:flex;flex-direction:column;gap:10px;}
+.wz-check-item{
+  display:flex;gap:12px;align-items:flex-start;
+  background:var(--deep);border-radius:12px;padding:14px;
+  border:1px solid rgba(255,255,255,.05);
+}
+.wz-check-icon{
+  width:42px;height:42px;border-radius:12px;
+  background:linear-gradient(135deg,rgba(0,242,255,.15),rgba(79,70,229,.15));
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;flex-shrink:0;
+}
+.wz-check-body{flex:1;min-width:0;}
+.wz-check-title{font-size:clamp(15px,3.8vw,17px);font-weight:700;color:var(--text);margin-bottom:5px;}
+.wz-check-desc{font-size:clamp(13px,3.2vw,14px);color:var(--muted);line-height:1.7;}
+.wz-check-tag{display:inline-block;margin-top:8px;background:rgba(0,242,255,.1);border:1px solid rgba(0,242,255,.2);border-radius:6px;padding:3px 10px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--cyan);}
+
+/* info banner */
+.wz-banner{margin:0 20px 20px;padding:16px 18px;border-radius:14px;font-size:clamp(14px,3.5vw,15px);line-height:1.8;display:flex;gap:12px;align-items:flex-start;}
+.wz-banner.info{background:rgba(0,242,255,.06);border:1px solid rgba(0,242,255,.18);}
+.wz-banner.warn{background:rgba(255,204,0,.06);border:1px solid rgba(255,204,0,.22);}
+.wz-banner.danger{background:rgba(255,77,77,.06);border:1px solid rgba(255,77,77,.18);}
+.wz-banner-icon{font-size:26px;flex-shrink:0;line-height:1;}
+.wz-banner-text{flex:1;}
+.wz-banner strong{color:var(--text);}
+
+/* phone explainer */
+.wz-phone-row{display:flex;gap:16px;align-items:center;padding:0 20px 20px;flex-wrap:wrap;}
+.wz-phone-img{flex-shrink:0;text-align:center;}
+.wz-phone-big{
+  width:130px;background:#0a0f1c;border:2px solid rgba(0,242,255,.2);
+  border-radius:22px;padding:10px 8px 14px;
+}
+.wz-phone-big .notch{width:36px;height:5px;background:rgba(255,255,255,.06);border-radius:3px;margin:0 auto 8px;}
+.wz-phone-msg{background:rgba(255,77,77,.12);border-left:3px solid var(--danger);border-radius:8px;padding:8px;font-size:9px;line-height:1.4;margin-bottom:6px;}
+.wz-phone-msg .msender{font-weight:700;color:var(--danger);font-size:8px;}
+.wz-phone-alert{background:rgba(255,77,77,.18);border-radius:8px;padding:6px 8px;font-size:9px;font-weight:700;color:var(--danger);text-align:center;animation:pulseBorder 1.5s ease-in-out infinite;}
+@keyframes pulseBorder{0%,100%{opacity:1;}50%{opacity:.5;}}
+.wz-phone-caption{font-size:11px;color:var(--muted);text-align:center;margin-top:6px;max-width:130px;}
+.wz-phone-steps{flex:1;min-width:180px;display:flex;flex-direction:column;gap:10px;}
+.wz-flow-step{display:flex;gap:10px;align-items:flex-start;}
+.wz-flow-num{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--indigo));color:#080e1c;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.wz-flow-text{font-size:clamp(12px,3vw,13px);color:var(--muted);line-height:1.5;}
+.wz-flow-text strong{color:var(--text);}
+
+/* android methods */
+.wz-methods{padding:0 20px 20px;display:flex;flex-direction:column;gap:10px;}
+.wz-method{background:var(--deep);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:14px;cursor:pointer;transition:.2s;}
+.wz-method:hover{border-color:rgba(0,242,255,.2);}
+.wz-method-head{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.wz-method-icon{font-size:24px;}
+.wz-method-name{font-size:14px;font-weight:700;color:var(--text);}
+.wz-method-badge{font-size:9px;background:rgba(0,242,255,.12);color:var(--cyan);padding:2px 7px;border-radius:6px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.wz-method-desc{font-size:12px;color:var(--muted);line-height:1.6;}
+.wz-method-steps{margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.05);display:none;}
+.wz-method.open .wz-method-steps{display:block;}
+.wz-method-step{display:flex;gap:10px;align-items:flex-start;padding:6px 0;font-size:clamp(13px,3.2vw,14px);color:var(--muted);line-height:1.6;}
+.wz-method-step-num{width:22px;height:22px;border-radius:50%;background:rgba(0,242,255,.12);color:var(--cyan);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.wz-code-inline{background:#040a14;border:1px solid rgba(0,242,255,.12);border-radius:7px;padding:5px 10px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#a5f3fc;margin:5px 0;display:block;word-break:break-all;line-height:1.8;}
+
+/* nav buttons */
+.wz-nav{display:flex;gap:10px;padding:20px;border-top:1px solid rgba(255,255,255,.05);}
+.wz-btn-back{flex:1;padding:15px;background:var(--surface);border:1px solid rgba(255,255,255,.08);border-radius:14px;color:var(--muted);font-family:'Poppins',sans-serif;font-weight:600;font-size:15px;cursor:pointer;transition:.2s;min-height:52px;}
+.wz-btn-back:hover{background:#1a2540;color:var(--text);}
+.wz-btn-next{flex:2;padding:15px;background:linear-gradient(90deg,var(--cyan),var(--indigo));border:none;border-radius:14px;color:#080e1c;font-family:'Poppins',sans-serif;font-weight:700;font-size:16px;cursor:pointer;transition:.2s;min-height:52px;box-shadow:0 0 20px rgba(0,242,255,.2);}
+.wz-btn-next:hover{box-shadow:0 0 30px rgba(0,242,255,.35);}
+.wz-btn-done{flex:2;padding:15px;background:linear-gradient(90deg,var(--ok),#00cc6a);border:none;border-radius:14px;color:#080e1c;font-family:'Poppins',sans-serif;font-weight:700;font-size:16px;cursor:pointer;transition:.2s;min-height:52px;}
+
+/* TECH MODE (advanced) */
+.tut-tech{padding:var(--gap) var(--px) 80px;max-width:860px;margin:0 auto;display:none;}
+.tut-tech.active{display:block;}
+.tut-tabs{display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap;}
+.tut-tab{padding:7px 14px;border-radius:18px;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:600;font-size:12px;border:1.5px solid rgba(0,242,255,.18);color:var(--muted);background:transparent;transition:.2s;white-space:nowrap;}
+.tut-tab.active{background:rgba(0,242,255,.1);border-color:var(--cyan);color:var(--cyan);}
+.tt-section{display:none;animation:fadeUp .3s ease;}
+.tt-section.active{display:block;}
+.tt-hero{background:linear-gradient(135deg,rgba(0,242,255,.05),rgba(79,70,229,.07));border:1px solid rgba(0,242,255,.1);border-radius:14px;padding:clamp(18px,4vw,28px);margin-bottom:20px;}
+.tt-hero h2{font-family:'Syne',sans-serif;font-size:clamp(17px,5vw,24px);font-weight:800;color:var(--cyan);margin-bottom:8px;}
+.tt-hero p{color:var(--muted);font-size:13px;line-height:1.7;}
+.step-list{display:flex;flex-direction:column;gap:14px;margin-bottom:20px;}
+.step-item{display:flex;gap:14px;align-items:flex-start;background:var(--deep);border:1px solid rgba(255,255,255,.04);border-radius:12px;padding:14px;}
+.step-num{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--indigo));color:#080e1c;font-weight:800;font-size:13px;font-family:'Syne',sans-serif;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-content{flex:1;min-width:0;}
+.step-title{font-weight:700;font-size:14px;margin-bottom:4px;}
+.step-desc{font-size:12px;color:var(--muted);line-height:1.7;}
+.code-block{background:#040a14;border:1px solid rgba(0,242,255,.1);border-radius:10px;padding:12px 14px;margin:10px 0;font-family:'JetBrains Mono',monospace;font-size:clamp(9px,2.5vw,11px);color:#a5f3fc;line-height:1.8;overflow-x:auto;white-space:pre;position:relative;}
+.copy-btn{position:absolute;top:7px;right:8px;background:rgba(0,242,255,.1);border:1px solid rgba(0,242,255,.18);border-radius:5px;color:var(--cyan);font-size:10px;padding:2px 7px;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:600;transition:.2s;}
+.copy-btn:hover{background:rgba(0,242,255,.2);}
+.info-box{background:rgba(0,242,255,.04);border:1px solid rgba(0,242,255,.12);border-radius:10px;padding:12px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.warn-box{background:rgba(255,204,0,.04);border:1px solid rgba(255,204,0,.18);border-radius:10px;padding:12px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.danger-box{background:rgba(255,77,77,.04);border:1px solid rgba(255,77,77,.14);border-radius:10px;padding:12px 14px;margin:10px 0;font-size:13px;line-height:1.7;}
+.tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:11px;font-family:'JetBrains Mono',monospace;font-weight:600;margin:0 2px;}
+.tag-get{background:rgba(0,255,136,.1);color:var(--ok);}
+.tag-post{background:rgba(0,242,255,.1);color:var(--cyan);}
+.tag-del{background:rgba(255,77,77,.1);color:var(--danger);}
+.endpoint-list{display:flex;flex-direction:column;gap:10px;margin:12px 0;}
+.endpoint-item{background:var(--deep);border:1px solid rgba(255,255,255,.04);border-radius:10px;padding:14px;}
+.endpoint-head{display:flex;align-items:center;gap:9px;margin-bottom:6px;flex-wrap:wrap;}
+.endpoint-path{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;}
+.endpoint-desc{font-size:12px;color:var(--muted);line-height:1.6;}
+
+/* ═══════════ POPUP ═══════════ */
+.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);display:flex;align-items:flex-end;justify-content:center;z-index:99998;animation:overlayIn .2s ease;}
+@keyframes overlayIn{from{opacity:0;}to{opacity:1;}}
+@media(min-width:600px){.popup-overlay{align-items:center;padding:20px;}}
+.popup-box{background:#0d1829;width:100%;max-width:480px;border:1px solid rgba(255,77,77,.35);box-shadow:0 0 80px rgba(255,77,77,.18),0 30px 60px rgba(0,0,0,.7);overflow:hidden;border-radius:22px 22px 0 0;animation:sheetUp .35s cubic-bezier(.32,1,.32,1);}
+@keyframes sheetUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+@media(min-width:600px){.popup-box{border-radius:22px;animation:popIn .3s cubic-bezier(.34,1.56,.64,1);}@keyframes popIn{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:scale(1);}}}
+.popup-handle{width:36px;height:4px;background:rgba(255,255,255,.12);border-radius:2px;margin:10px auto 0;}
+@media(min-width:600px){.popup-handle{display:none;}}
+.popup-box.medium{border-color:rgba(255,204,0,.35);}
+.popup-head{background:linear-gradient(135deg,rgba(255,77,77,.15),rgba(79,70,229,.15));padding:16px 20px 14px;border-bottom:1px solid rgba(255,77,77,.12);position:relative;}
+.popup-box.medium .popup-head{background:linear-gradient(135deg,rgba(255,204,0,.1),rgba(79,70,229,.08));border-color:rgba(255,204,0,.12);}
+.popup-head-row{display:flex;align-items:center;gap:11px;}
+.popup-ico{font-size:28px;animation:shake .4s ease;}
+@keyframes shake{0%,100%{transform:rotate(0);}25%{transform:rotate(-8deg);}75%{transform:rotate(8deg);}}
+.popup-title{font-family:'Syne',sans-serif;font-size:clamp(14px,4vw,18px);font-weight:800;color:var(--danger);}
+.popup-box.medium .popup-title{color:var(--warn);}
+.popup-sub{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px;}
+.popup-x{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.07);border:none;color:var(--muted);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:.2s;}
+.popup-x:hover{background:rgba(255,77,77,.2);color:var(--danger);}
+.popup-body{padding:16px 20px 20px;}
+.popup-sender-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.popup-avatar{width:38px;height:38px;border-radius:50%;background:rgba(255,77,77,.1);border:1px solid rgba(255,77,77,.22);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.popup-sender-name{font-weight:700;font-size:13px;}
+.popup-sender-time{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.popup-msg{background:#050c18;border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.7;border:1px solid rgba(255,255,255,.05);max-height:100px;overflow-y:auto;margin-bottom:12px;word-break:break-word;}
+.popup-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 13px;border-radius:20px;font-size:11px;font-weight:700;margin-bottom:10px;font-family:'JetBrains Mono',monospace;}
+.popup-badge.high{background:rgba(255,77,77,.1);color:var(--danger);border:1px solid rgba(255,77,77,.22);}
+.popup-badge.medium{background:rgba(255,204,0,.1);color:var(--warn);border:1px solid rgba(255,204,0,.22);}
+.popup-score{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:12px;}
+.popup-kws{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;}
+.popup-kw{background:rgba(255,77,77,.07);border:1px solid rgba(255,77,77,.18);color:#fca5a5;padding:2px 9px;border-radius:20px;font-size:10px;font-family:'JetBrains Mono',monospace;}
+.popup-acts{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.pbtn-ok{padding:12px;background:var(--surface);border:1px solid rgba(255,255,255,.08);border-radius:11px;color:var(--muted);font-family:'Poppins',sans-serif;font-weight:600;font-size:13px;cursor:pointer;transition:.2s;min-height:46px;}
+.pbtn-ok:hover{background:#1a2540;color:var(--text);}
+.pbtn-block{padding:12px;background:rgba(255,77,77,.1);border:1px solid rgba(255,77,77,.25);border-radius:11px;color:var(--danger);font-family:'Poppins',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:.2s;min-height:46px;}
+.pbtn-block:hover{background:rgba(255,77,77,.2);}
+
+/* ═══════════ TOAST ═══════════ */
+.toast-wrap{position:fixed;bottom:0;left:0;right:0;z-index:7500;padding:0 12px calc(14px + env(safe-area-inset-bottom));display:flex;flex-direction:column-reverse;gap:8px;pointer-events:none;}
+@media(min-width:600px){.toast-wrap{left:auto;right:20px;bottom:20px;width:320px;}}
+.toast{background:#0e1d30;border-radius:12px;padding:12px 14px;box-shadow:0 8px 28px rgba(0,0,0,.5);border-left:3px solid;display:flex;align-items:flex-start;gap:10px;animation:toastIn .3s ease;pointer-events:all;cursor:pointer;}
+@keyframes toastIn{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+@keyframes toastOut{from{opacity:1;}to{opacity:0;transform:translateY(12px);}}
+.toast.high{border-color:var(--danger);}.toast.medium{border-color:var(--warn);}.toast.low{border-color:var(--ok);}
+.toast-icon{font-size:18px;flex-shrink:0;}
+.toast-body{flex:1;min-width:0;}
+.toast-title{font-size:12px;font-weight:700;}
+.toast.high .toast-title{color:var(--danger);}.toast.medium .toast-title{color:var(--warn);}.toast.low .toast-title{color:var(--ok);}
+.toast-msg{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.toast-time{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px;}
+.toast-x{background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:0 2px;flex-shrink:0;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* ═══ MARQUEE (mobile only) ═══ */
+@keyframes marqueeScroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+.marquee-wrap{overflow:hidden;white-space:nowrap;flex:1;min-width:0;mask-image:linear-gradient(90deg,transparent 0%,black 8%,black 92%,transparent 100%);}
+.marquee-inner{display:inline-block;white-space:nowrap;}
+@media(max-width:599px){
+  .marquee-inner{animation:marqueeScroll 12s linear infinite;}
+  .marquee-inner:hover{animation-play-state:paused;}
+}
+@media(min-width:600px){
+  .marquee-wrap{mask-image:none;overflow:visible;}
+  .marquee-inner{animation:none;}
+}
+/* ═══ POPUP FIX MOBILE ═══ */
+.popup-overlay{position:fixed;left:0;right:0;top:0;bottom:0;background:rgba(0,0,0,.88);display:flex;align-items:flex-end;justify-content:center;z-index:99998;}
+@media(min-width:600px){.popup-overlay{align-items:center;padding:20px;}}
+.popup-box{touch-action:manipulation;}
+.pbtn-ok,.pbtn-block{touch-action:manipulation;-webkit-tap-highlight-color:transparent;cursor:pointer;}
+/* ═══ SIMULASI BUTTON ═══ */
+.cbtn-sim{border-color:#00f2ff;color:#00f2ff;background:rgba(0,242,255,.08);}
+.cbtn-sim.active{background:rgba(0,242,255,.2);box-shadow:0 0 10px rgba(0,242,255,.3);}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ HOME ═══════════ -->
+<section id="homePage">
+  <header class="site-header">
+    <div class="logo" style="display:flex;align-items:center;gap:10px;"><img src="data:image/png;base64,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" style="height:clamp(36px,5vw,48px);width:auto;mix-blend-mode:screen;" alt="Logo"/><div class="marquee-wrap"><div class="marquee-inner">SENIORSHIELD&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;SENIORSHIELD&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;</div></div></div>
+    <button class="nav-btn" onclick="showLogin()">Login</button>
+  </header>
+  <div class="hero">
+    <h1>Pelindung WA & SMS untuk Keluarga</h1>
+    <p>Deteksi otomatis penipuan & hack WhatsApp secara real-time</p>
+    <button class="hero-btn" onclick="showLogin()">Masuk ke Dashboard</button>
+  </div>
+</section>
+
+<!-- ═══════════ LOGIN ═══════════ -->
+<section id="loginPage" class="hidden">
+  <div class="login-box">
+    <div class="login-title">SENIORSHIELD</div>
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="showTab('tabPwd',this)">🔑 Password</button>
+      <button class="tab-btn"        onclick="showTab('tabNFC',this)">📡 NFC</button>
+    </div>
+    <div id="tabPwd">
+      <input class="field" type="text" id="user" placeholder="Username" autocomplete="username"/>
+      <input class="field" type="password" id="pass" placeholder="Password" autocomplete="current-password"/>
+      <button class="btn-login" onclick="doLogin()">Masuk</button>
+    </div>
+    <div id="tabNFC" class="hidden">
+      <div class="nfc-wrapper">
+        <div id="nfcBadge" class="nfc-badge">● SIAP</div>
+        <div id="nfcRings" class="nfc-rings">
+          <div class="nfc-ring"></div><div class="nfc-ring"></div><div class="nfc-ring"></div>
+          <span class="nfc-icon">📡</span>
+        </div>
+        <div id="nfcUID" class="nfc-uid">UID akan tampil di sini...</div>
+        <p class="nfc-info">Chrome Android + NFC aktif diperlukan.<br/><a href="https://support.google.com/android/answer/9075925" target="_blank">Cara aktifkan NFC ›</a></p>
+        <button id="nfcBtn" class="btn-nfc" onclick="startNFC()">Mulai Scan NFC</button>
+        <div id="nfcHint" style="margin-top:10px;font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;text-align:center;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ DASHBOARD ═══════════ -->
+<section id="dashboard" class="hidden">
+  <div class="dash-header">
+    <div class="dash-logo" style="display:flex;align-items:center;gap:8px;"><img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAGYAmQDASIAAhEBAxEB/8QAHAABAAIDAQEBAAAAAAAAAAAAAAYHAgQFAwEI/8QARRABAAEDAgQCBQgHBQgDAQAAAAECAwQFEQYSIUExUQcTImFxFDKBkbHB0fAVFiNCUnKhQ0RUYpMlJjM0NnOS8SQ1guH/xAAbAQEBAAMBAQEAAAAAAAAAAAAAAQMEBQcCBv/EADERAQABAwIEAwcEAgMAAAAAAAABAgMEESEFEjFBExRxBiIyUWHB8IGh0eEWUpGx8f/aAAwDAQACEQMRAD8A/GQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA6Ol6LqOpXIpxsauY71THSE00HgaxZqpvalc9bV4xbpj2fp3BXQszXNB06/frtU2Yt7RG00/CER1PhjMxt6rH7ej/L4+JqujgjO5buW6trlFVM++GAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADKm3cq+bRVV8IBiOngaDq2bMeowru0/vTG0O9hcBZ1yYnJv0Wqdt526zAIc9sfFyMi5Tbs2blyqrwimlZ2m8F6PizTVdpuZFcbT7cxEfVH4u/i4mLi0cuNj27Uf5adplNRWml8F6nk1x8o2xqJ8ebx2+CW6TwfpGDtVcirKuedfSPqhIp28WNdVFFPNXVFNPnM7C6MrNu3atxRaopoojwppjZn8HB1TirScCJp+UReuR+7b/FENY43z8mPV4cRj0ecfOn6Vj6nqmmo7fLLkz49Psh4Uz4q4x9c1K1f9b8orrmZ3nmnfdItO4sx64iMujknvMfn4A72Zp+Fl0zF+xTMzHzojaUd1DhCiZmvDvTEfw1dvz9CQ4mo4eVETYyKK9/CN+rZ3j3oitc/Rs/Dne5Yrmn+KI6OfVTVTO1VMx8YWzO0779Y8paWVpen5MTFzGoiZ7xGxqKyEyzeErNUzVjX5p91TkZPDWoWqd6KPWecRCjiD2vYuTZqmm7ZrpmPHo8piYnaYmJ8pB8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABJ+F+FKtawvlXyqLVO8xttvv1SDG4AwKJ/b5d677oiKXt6L699DuU/wANf4pZMdNwcDH4R0OzEf8AxprmJ8aquv2Orjadg4/Wzi2qJ8+X73PzuJNIwrtdq9lxNdE7TTTHWJczI480yidrVm7c989EVLN4jp5Psq9zOP78xMYuHRT76p3+ny/o4uZxZreVG1WVNFPlRHL9hobLWu5ONZ63r9qiI/iriHG1Li7RsXeim/N6uI8KPxlVl7Lyb0z62/cq38d6vF4LEaIm2o8eZFXNTh49FMeEVVdfz9SNZ+t6nnTPyjKrqifGIlzgXV9mZmd5neXwBAAGdu5Xbq3oqmmfc6uDxFqONtE3PW0R+7U44CaYfFmPXtF+1NM7dZjo62Lq+n5Mb28min3VTsrV9pqqpnemZifOJNBakV01fNqiqPOJ3ZR33VlZz8u1O9F+uJ89+v1uli8T6ja6XJpuR4dYTSBOq6KLlO1dFNceVUbtHJ0rT78e3jUx3nbdyMfi2zNM+us7T7pnefz8W3a4j025tzV1W598RsaadB8yOGdNuzM0c9uZ8vD6mhe4Rjbe1lfRVGyR4mTZyrMXbFfPT57T972F0Vhm2JxsquzM78s/c8W3q9XNqV6rzmPshqKgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACyPRXV/svJp8q4+9MKvCfghPoonfEzad/36fz/VNK9/CJ8SRTvFMTGuZO/wDHP2y8NK0zM1O7Vaw7XrKqY3n3Q2uL6eXX8iOnzp+2Xc9Fk7Z+T/2wcqeEdcj+6x9b5+qWuf4X+q2JmY7sJq6pquyq/wBUtc/wsfWTwlrkf3X+q1ebcmSZ0NlS3OF9bojecKur+WN2rf0fVLEb3cG9THvpXHM7dWO3T7lRSVy1dt/Pt1U/GGC6MrTsHLomMjHt1799oiUW13gi1XzXdNqmmdt/V1AgA9szFv4d+qzkWqrddPjEw8QAAG1pen5ep5lOJhWZu3ao3imPJqrV9EOixYwLmsXqP2l72Le8eFPeWS1b8SrRo8RzYw8ebs9e3qiX6hcSf4W3/qQ+/qFxJ/hrX+pC6YiZmd2WzejDo+cvyX+UZX+tP7/yoTWOGNZ0nGnJzcX1dqJiJq5o23ns4yeelzW/lWo06VZr/ZY871xHetA2jcpimqYh+vwL169j03L0REz8k74N3/RP/wCo+yHY8XI4PjbSYifOJ/pDs1bRTM79mKW6rDNnmyrk+94s7873qp97BUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATj0U3J+U5lvtyRV4+9P58Vb+i6vl1m9R2qtLJmPoSVhUfHFO3EmT023qZcHazZ0fLu3b1E1U10cr19IdHJxHd98RKOKiw7nHeFvMU4t2ffv/8AxjHHWH/hLv8A5K+e9nDyr1HPasV10+cQLqnUcdYXfEu/Wy/XvBn+7XvrQb9HZ3+Fu/8Ai872Jk2aea7YuUR5zT0EWFZ410uudrlN23v323drB1jTM2N8fLt1e6Z2nfy6qdZUV10Vc1FU0z5xILvid43feqveEeKrti7Rh59c12qp2prnxpWBTXFdMVUzvTPWJhJVGeK9Mtajdu0zERdjblq8Ou0eKusqxXj367NyJiaZ2Wrn/wDN1z8PshE+NMGmbMZlERzb7Vef52+wiREQFR0eHdNuavrGPgW/7Sr2p8o7r9xbFvFxbWLZjlt2qYpiIjbtt9aC+iDR/UYdzV7tG1d72LUz/D32T6ZdPEt8tPNPd+B9os7xsjwqZ2o/7/Nn2J26ubxPqtvSNEv5tcxzU07UR51T4OjvG+26o/Strfy7VI06zXvZxZ9raek1Ml+54dGzR4Tg+cyaaZ+GN5/P2Q3Iu1379y9cmaq66pqmZ97zByHpkRon/CcxVo9ExEx1iPqjZ0cuv1eNdr/hoqn+jR4Wo5NGt+/r9j31evk03Iqmf3J/D70lYVzenmvV1edUywJ8RUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAST0dXvVcRW6O1cTE/VP4rV5onopnhi/GNrmNcmqaaefrt5LjpnukqrX0n2po12i52rtxt9HRE099K9qJnEvRHXaad/h/7QJUFn+j2I/V6mdv7SfshWC0PR5P8Au7T/ANyfsgWEiiPd0Rv0jRT+gPCPnxMfUkvZGfSNP+w9v8/4p3FZAKj7EzE7x0mFmcE6lVmaLtdn27PSZ226dvwVklnAl6um3kWY35atpn6JCEou1zcrqqnvO7T1m3F3TL9PfkmWzLxyv+UvfyT9j5WFbXKZouVUT40zMNzQdOu6rq2Pg2omZu1xE+6O8tS9/wAWvfx5pWb6H9G9Xj3dYu0RzXN6LUz5d9mezb8SuIaHEsyMPGqu9+3qnuHi2cHCs4dina3aoimn6vtlnVE9vBnVO8sY69nY6PLqpqrnmlx+K9Vo0fQ7+XVXFNyKeW1HnVPhsom9crvXq7tyZqrrqmqqZ7zKY+lbWoz9XjAs172cWZ328Jq7oW5WTc569ukPROA4PlsaKqo96rf+AGdimK71FM77TVG+3k13bWLolNVGl2Kauk8s/a8eJLlNvSrsz1ido6/FvY1M0Y1umfGKIiff5uLxnc5NNimKtpqn6+337p3VCQFQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABnj1+rv27n8NUT/VdmDejIwrN+PCuiJ/FSC3eCL8ZPDmPO8TNHszEdp8gaPpGx5vaF6zad7dW8/nZWC6OIbEZGjZVmad4m3MxHw6qYrpmmqaZ6TE7SkLL4tD0e/8AT1H887/VCr1ocAf9O2/55+yFRIZmIRn0i/8A0kfz/ckkz9KN+kLroU/zx9kp3VWgCoJjwRa5cO5dmJjmnbfz6ovpuHdzcqizbomreeuyxcPFoxMW3Yo/dp6zEeIM6o6y1dWr9Xp1+uPHk2j6W5/VHuNcyLWLTi0TtVc61de3h+KR1Ec0nDu6trNrFtUzVVeuddvLfqv3AxLWDgWcOxTFNFqiKYiO+3jP3oB6H9G5bV3WbtHWf2drf+qxZnru6eJb5aeae78H7SZvjX4s0ztT19TZxuMNXt6Nod7Kqq2uVRNFqO8zLs8yoPSprUahrEYNi5zWMWZjp4c3dkyLnJROjQ4NhebyYpn4Y3lD71yu7dru1zNVVczMzPeZYA5L0sb2hW6rup2oiInaeu/l4fe0Xe4Lx/W6jN2fC3G/x/PQE29yJcc3o9ZZseUc31+P3JZKCcW3fWarVEVRVFPht9X3JA44CgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD7FMzTVVEdKfFPvRXmb2srCqnw2rp3nt5f1QnCiKovW5mnaqjfrO3WPD8fodLgvO+Q67Zqmdqbk8lU77bAtyuOaJjtPRTXE2JOHrWRZ222q3hciAek/AiL1nPoidqo5a/z9SQIQtDgD/p23/PP2Qq9aPo+j/d2id/35+yFHdqpmJcjivTsjUtKqsY8RNzeJ2mqI8/N2pfOj5kVlPB2sUxzV0WqafPnj8Xti8JV88fKL0RG/hHf8/FN827zTyUz7MePvlqzuuo1tOwMXAsxRj0bTt1qlsVeDGu7btU81y5TTHvlyNV4hw8WOW1V62uY6beEdDqrf1DMs4WNVeu1RG0dI7zKEW4yNe163Zp3mu/ciIjyhraln5GdequXa52nwp7RCf+h/RaZpu6zeonmiZos7+HvlltUc9UUtHiGXGJYquz17eqwNNxLOBptjDsxEUWqIp6R9c/S9ebdlPix279nYiNHl9dc11TVV1lxeNdXjR9AvZG8Rcrjktxv13n8FGXK6rlyq5XO9VU7zKWek/Wv0jrU4lmqZsYszT7pq7yiLl5Fznr26Q9D4Fg+Vxomr4qt5+wA13aE34Mx/VadVd73J8d/p+jt9SGWLdV69RbpiZmqeyyMCxGNhWrMREctMb7ef/sHpfuRbs111eFMTPxVvk1V5Wbcqj2pqqnb4JpxRkeo0u5/n6dJ/PuRHSLdNdd+7V4WrNVX0zG33kQlU6Q0QBQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHvgVzby7cxMRvPLvMbxG/T733Lt/JsyYonpTMVUTE9vGGvHSd4dPV7dVeNj5cR7NVPLPWJmO8QC0eG82nP0exfivmq5eWqffH53OI9PjUdIv4+29fLzUfGEP9GepzbyLmnXJ9m57VG/aVg+EoKMu0VWrlVuuNqqZ2mHV0viPVNNxox8W7RTaid+WaIl0PSDpU4eqTlW6drV7r8JRhRIJ4w12f7zR/pwfrhrn+Io/wBOn8EfAdv9aNW33m5bq+NEfc8b/EGp3t97/J/JvDn4k2qcm3Vfo57UVRz077bx3XBgcEcJZ+BazMbHvVW7tMVUz6+r6mW1Zm50aGdxK1gxE3YnSfkqG7mZV2qarl+uqZ8Z36vBdUcAcNRP/KXdv+7Ln8Rej7Sf0VeuaZbuWsmmOanmuTVE7dtmWcO5EatG37RYldcU7xr9P7VfpOHc1DUbGHaiZqu1xT0X5pWJa07TrGFZiKaLVG0RHf6/pQP0RaLNFzI1TJtRFVMzbt7+MT3lYvdsYlvlp5p7uF7SZ3i3osUztT19f6feri8a6vRo2gX781RF2uPV2o7zVt4/Q7kdlP8ApT1mNQ1r5FZq5rOL7O8eE1d33kXOSj1c/guF5vJiJ+GN5Q+uqquuquqd6qp3mWKxNJ4L0DTeH8XXOMtUvYlvLjexj2KOa5VHm+cW8DaRTwrHFPCmpXc7Tqa4ovUXKdq7XvlynpSvBaOPwFwpn8F5utaVr97LycOzFd61ybRRVtvt18fjCsLdFVyumiiJqqqnaIjuDt8H4M5Ooeurp/Z243+KbS0dAwowtNt0TtzzG9X2/R4zLY1C/GLiXL89eWOnxPov0RHjPJ9Zm02KZ9m3H9WNjHjE4Pv5tUe3l3qbVud/CI3mY297k3aruZmTMb13LlW0bz19yQ8d004NOn6Lb6fJbMVXIjvXV1n8H3TG0y1r1fv0W477/pH96IuA+GwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAO7oG2bp+Tpte017c1rft5xH2/Q4Tb0rLqw863epmYiJ9rbvAMcS/ewM6i7RM03LVXVcOkZtvUNPtZVuY9qn2o8pVlxXhbXqM+xE1WL9MVb+XbafL/ANOj6PdZ+S5X6Pv3Ji1dn2N/Cmfw/PYVNeI9Mo1XS7mPVHtxG9ufeqHKsXMa/XZu07VUztK8EL9IHD/rqKtUxaPbj/iUxHj7w0V8AILE9EvEXqbv6Eyrm1FyrexM+ET5K7emPdrsX6L1qqaa6KoqpmO0w+7dc26oqhqZ2JRl2KrVXf8AaX6PneJ6vsz0cTg7WbeuaJZyYn9tTHLdp8pju7LsxVFdOsPMb1mqzcm3XGkxtLypot2t6bdFNFO++1MdGcTG7CufbkjxO7HO7lcZ6xb0fQb2TM7Xao5LUR5z0UXNya8j1tzeqZq5qvelnpR1qNR1r5HZriqxjRy9J6TV3Q9y8i5z17dIehcCwfLY0VVfFVvP2Wt6YcTJz+G+G9UwLdy/g/Jabf7ON4oq28J27tzh6Lmh+gjVatTt1Wvlt3lx7dyNpqnft+eyB8Mcc8R8O4s4mn5kTjTO/qbtEV0x8InwavFPFmu8S10Tq2ZN2i31otU0xTRTPnER3a7tpp6LbkUejbi/er+zp+xDuEdNqv5cZVymfVUdY37/AJn73lw5nanbt5Gl4V6aMfMiKb9MR4xumeBi28PFpsW4+bG3x8DUe/WZ6opxrqEzNGFbnpHWqfPskOp5dOHh135mN46U7+avqpyNR1Daimq5evVbUx3lINdEl9GemRkanc1PIpp+S4dM11TV4b+MI9rudXqOrZOZXMz6y5M079o36J7xLNrhbgizpFqrbMyoibm3bzVqz3I5Yij/AJc3Br8xcryO07U+kd/1kAYXSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASrh7It6jpl3SsjrXtvbmZnr7vz70dyrF7By5oq3pronemfpfMHJuYmTTet1TTMT127wk+r4lvWNMpz8aiJvUx7cRP5/PwUSfgvXKNVwIt3aojJtdKo71R5pBMU1UTRXG8VdJifJS2lZ2RpmdRfs1TTVTPtR5rc0XUrGp4VGTZqiZ29qI/dl8zCoFxvw3Vp92c3FpmrGr61d+VFF5X7du/Zrs3qYrorjaYmOys+MOGrumXpyMama8Wrw28afcupKMgCJP6O9eq0bW6KblU/Jr88lyPLyldm9NVMVUzvTMbxL82R0neFw+i7iD9JaZ+j8mvfJxo2p86qfP6Pz4N7Du6TyT+j8n7R8O5ojJojptP2lLK49uZcTjTWKNG0K7fir9tX7FuPf8AmXdubRMqc9Jes/pLW6sa1VvYxp5Y9892fIuclP1cPg2F5vJiJ+GN5/Pqityuq5cquVzvVVO8yxBynpA9LFm5fuxbt071SY9m5fuxbtUzVVKb8PaLRgWovXopqv1R/wCIPXh3S6NPx+aqN71Ue1Pjs6ldVMRNVU7REdZl8nfzRnivV/V0Th49Ubz8+UHL4n1P5dlRbtVTNqjpt70q9FWg0c1zXs+OSzZpn1U1eG/er6kY4P0HI17VKbVNM+oomKr1faI3TH0i6zZ0rS7fD+mzFE8u1fL+7T+LZtUxTHiVdIcfiV+u7VGHZn3qus/KEO411irWddvX4q3s0VTRa/lhwwYKpmqdZdS1aptURRT0jYARkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHX4c1SdPyYpr3m1XMRVDkAJPxLo8Vx8uwoiqirxphzeHNZv6PmRcomZtzO1dG/i2eG9ZnGqjEyvbx6522ntuy4i0b1e+dh1RcsV+107KqytMzrGoYlORYriqmYjp3iXvXbou0Tbu0010VdJplUfDmtZGkZcV0TNVqr59HaVqaTqOLqeLGRi3Kao7079aZSRDOLeD6rMV5mmxz2/Gq33j4IVVTVTVNNUTEx2levxRziXhTD1Pmv40U2Mie8dIlNTRVjf0DU7+karYzrFUxVbq6x2mO8SatpObpl6beVZqpiPCrbpMebQWJ03h8V0RXTNNUbSubivibFscL/LsW5E3MmiKbO3nO2/fpspuuqquua6p3qqneZeleTfrxaMaq7VNmiZqpo36RLypiaqoppiZmfCIZbt2bk6y0OHcOt4NFVNO+s/8Aj42tPwcnNuxRYtzMTPWrbpDqaNw9fypi7kRyWvLz9yXYOJj4dmm1j24jaNt+8/Fi1dFraHo9jTre/wA+7PWZn4OjVO8kztCPcQ67Rj0zj41XNcmOtUT4A+8SazTjUTj2Jmbsx12npHuRrSNOzda1GnGxqZruVz1qnwpjzmXzS8DM1nUaMXGom5duT49ohaWNb0ngPQ+e9Nu5m109f4rk+Ue5lt2+bedohzs/O8vEW7cc1yrpH3n6Gde07gXhyLFmYqyrkbUx41V1d5+EKlzMi7l5VzJv1zXcuVTVVMtrX9Wy9Z1C5mZVczNU+zT2pjyc8u3OedI6QcOwpxqZquTrXV1n7ADE6IAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA7Gia1cwv2F+PW49U7VUz5OOAkWsaRav2/l2mVRXRV1qojxjdzNH1LL0nNi9YqqpmJ9uiem/ul5YGdk4VyK7NyYiP3d+kuhcnB1aqZppjGyp7fu1fD8/UCf8AD3EmJq1qKZri1f8A3qJ6bz7na3UpXaycS5z0zVTMT8+iZ2+tK+HuM7lqaMfUqZro6R6yJ6x75F1T3Lx8bMszZybNF2iY8Ko8PghWv8ETtVe0qYmYn/hVVbfUmGDl4+bai7jXablPfbt8YbO6CosXh/UbuTNq5Zm1yztVNUbbJTpOh4eDPPNPrLnnV12d3UeuVXPw+yGvtJqEz09zzuXKLVE13KopiPGZ/P8ASHO1bW8XCpmOaLlz+GPxQ/U9Uy9Qu7V1Ty7+zTH4Kjqa/wAQVXprx8OdrfhNXn+erm6HpGbrWdFjGomqZ611z4Uw3NI0Dnt/LNVv0YeJTHNMVT7dceUQ3sviynCw/wBH8PWPkliOlV2r59fv9zJTRHWpp3r9dXuWI1n59o/n0SSvN0XgbTZx8TlytTuR7U7d/fPl7leaxqeXqubcy8u7VXXVO8RM9KfdDUuXK7tc13K5rqnrMzO8yxK7k1bRtCYuDTYma6p5q56zP5tAAxt0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB728q7RE01TFdM+MVRuxuzaq60RVTPl2eQDc0zUszTr8XcW/XRMeMb9JjyTTReN7Vyqm1qNuaJnp6ynbb8/nZX4GqydX1/TrdVd6i9FzeI5Ypjbt7/uRLVuI8vLj1dmZtW5jbaHDAZ0zFy5vduTEd6pjeW7j51rDiKsSxHro/tLsRVMfCHPF10SYidpe+Zl5OXdm7k3q7tczvvVP3dngCERptAAKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//Z" style="height:clamp(28px,4vw,40px);width:auto;flex-shrink:0;mix-blend-mode:screen;" alt="Logo"/><div class="marquee-wrap"><div class="marquee-inner">WA GUARDIAN — SENIORSHIELD&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;WA GUARDIAN — SENIORSHIELD&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;</div></div></div>
+    <div class="dash-right">
+      <button class="dash-btn" onclick="toggleApiPanel()">⚙ Pengaturan API</button>
+      <button class="dash-btn" onclick="doLogout()">Keluar</button>
+    </div>
+  </div>
+
+  <div class="dash-body">
+
+    <!-- CONNECTION BAR -->
+    <div class="conn-bar">
+      <div class="conn-top">
+        <div id="connDot" class="conn-dot"></div>
+        <div id="connText" class="conn-text">Status: <b>Belum Terhubung</b></div>
+        <div id="connCount" class="conn-count">0 pesan</div>
+      </div>
+      <div class="conn-btns">
+        <button class="cbtn cbtn-on"  onclick="connectAPI()"><span class="cbtn-icon">⚡</span><span class="cbtn-lbl">Hubungkan</span></button>
+        <button class="cbtn cbtn-off" onclick="disconnectAPI()"><span class="cbtn-icon">■</span><span class="cbtn-lbl">Putus</span></button>
+        <button class="cbtn cbtn-sim" id="simBtn" onclick="toggleSimMode()"><span class="cbtn-icon">🔄</span><span class="cbtn-lbl">Simulasi</span></button>
+        <button class="cbtn cbtn-uji" onclick="sendTest()"><span class="cbtn-icon">🧪</span><span class="cbtn-lbl">Uji</span></button>
+      </div>
+    </div>
+
+    <!-- API PANEL -->
+    <div id="apiPanel" class="api-panel hidden">
+      <div class="api-panel-head">
+        <h3>⚙ Pengaturan Koneksi API</h3>
+        <button class="tut-link" onclick="openTutorial()">📖 Panduan Lengkap →</button>
+      </div>
+      <div class="api-grid">
+        <div class="api-group">
+          <div class="alabel">Mode Koneksi</div>
+          <select class="aselect" id="apiMode">
+            <option value="ws">⚡ WebSocket (Real-time)</option>
+            <option value="poll">🔄 HTTP Polling</option>
+          </select>
+        </div>
+        <div class="api-group">
+          <div class="alabel">Interval Polling (detik)</div>
+          <input class="ainput" id="apiInterval" type="number" value="5" min="3" max="60"/>
+        </div>
+        <div class="api-group ag-full">
+          <div class="alabel">URL Server</div>
+          <input class="ainput" id="apiUrl" type="text" placeholder="ws://localhost:3001  atau  http://localhost:3000"/>
+        </div>
+        <div class="api-group">
+          <div class="alabel">API Key</div>
+          <input class="ainput" id="apiKey" type="text" placeholder="seniorshield-secret-key" value="seniorshield-secret-key"/>
+        </div>
+        <div class="api-group">
+          <div class="alabel">Notifikasi Minimum</div>
+          <select class="aselect" id="apiMinRisk">
+            <option value="30">Medium &amp; High Risk</option>
+            <option value="60">High Risk Saja</option>
+            <option value="0">Semua Pesan</option>
+          </select>
+        </div>
+      </div>
+      <div class="api-actions">
+        <button class="apibtn apibtn-save" onclick="saveApiCfg()">💾 Simpan &amp; Jalankan Otomatis</button>
+        <button class="apibtn apibtn-ping" onclick="pingServer()">🔌 Cek Koneksi Server</button>
+      </div>
+      <div class="api-status-line" id="apiSt">Status: Belum dikonfigurasi — klik Panduan Lengkap untuk bantuan</div>
+
+      <!-- ══ DEMO SECTION ══ -->
+      <div class="demo-section">
+        <div class="demo-title">
+          🎬 Demo Langsung — Lihat cara kerja SeniorShield
+          <span>COBA SEKARANG</span>
+        </div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.6;">Tekan tombol <strong style="color:var(--text)">▶ Putar Demo</strong> di bawah untuk melihat bagaimana SeniorShield mendeteksi SMS berbahaya secara otomatis — tanpa perlu server nyata.</div>
+        <div class="demo-row">
+          <!-- phone mockup -->
+          <div class="phone-mock">
+            <div class="phone-notch"></div>
+            <div class="phone-screen" id="demoScreen">
+              <div style="text-align:center;padding:16px 8px;font-size:9px;color:var(--muted);line-height:1.8;">
+                📱<br/>Tekan<br/><strong style="color:var(--cyan)">▶ Putar Demo</strong><br/>untuk melihat<br/>cara kerjanya
+              </div>
+            </div>
+            <div class="phone-footer" id="demoFooter">Menunggu demo...</div>
+          </div>
+          <!-- controls -->
+          <div class="demo-controls">
+            <div class="demo-msg-list" id="demoMsgList">
+              <div class="demo-msg-item" id="dmi0"><div class="demo-msg-badge danger">🚨</div><div class="demo-msg-text">Akun WA akan diblokir! Klik link ini...</div><div class="demo-msg-label danger">BAHAYA</div></div>
+              <div class="demo-msg-item" id="dmi1"><div class="demo-msg-badge warning">⚠️</div><div class="demo-msg-text">Kode OTP Anda: 847231. Transfer dana...</div><div class="demo-msg-label warning">WASPADA</div></div>
+              <div class="demo-msg-item" id="dmi2"><div class="demo-msg-badge safe">✅</div><div class="demo-msg-text">Halo! Apa kabar? Jadi kumpul besok?</div><div class="demo-msg-label safe">AMAN</div></div>
+              <div class="demo-msg-item" id="dmi3"><div class="demo-msg-badge danger">🚨</div><div class="demo-msg-text">Hadiah 50 juta menunggu! Klik sekarang...</div><div class="demo-msg-label danger">BAHAYA</div></div>
+            </div>
+            <button class="btn-demo" id="demoBtn" onclick="runDemo()">▶ Putar Demo</button>
+            <div class="demo-progress"><div class="demo-bar" id="demoBar"></div></div>
+            <div style="margin-top:10px;font-size:11px;color:var(--muted);line-height:1.6;text-align:center;">
+              🟢 = pesan aman &nbsp;|&nbsp; 🟡 = waspada &nbsp;|&nbsp; 🔴 = berbahaya
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-strip">
+      <div class="stat-pill high"><div class="num" id="sHigh">0</div><div class="lbl">⚠ Bahaya</div></div>
+      <div class="stat-pill med" ><div class="num" id="sMed" >0</div><div class="lbl">⚡ Waspada</div></div>
+      <div class="stat-pill low" ><div class="num" id="sLow" >0</div><div class="lbl">✓ Aman</div></div>
+    </div>
+
+    <!-- SCAN MANUAL -->
+    <div class="wa-card">
+      <h2>📩 Scan Manual SMS / WhatsApp</h2>
+      <textarea id="inputText" placeholder="Tempel pesan mencurigakan di sini, lalu klik Scan..."></textarea>
+      <button class="btn-scan" onclick="manualScan()">🔍 Scan Sekarang</button>
+      <div class="scan-bar"><div id="scanBar" class="scan-bar-inner"></div></div>
+      <div id="resultBox" class="result-box"></div>
+    </div>
+
+    <div class="wa-card"><h2>📊 Statistik Deteksi</h2><canvas id="attackChart"></canvas></div>
+    <div class="wa-card"><h2>📋 Log Aktivitas</h2><div class="wa-log" id="logBox">Menunggu pesan masuk...<br/></div></div>
+
+  </div>
+</section>
+
+<!-- ═══════════ TUTORIAL PAGE ═══════════ -->
+<section id="tutorialPage" class="hidden">
+  <div class="tut-header">
+    <div class="tut-header-left">
+      <div class="tut-title">📖 Panduan SeniorShield</div>
+      <div class="tut-mode-toggle">
+        <button class="tut-mode-btn active" id="btnModeAwam"  onclick="setTutMode('awam')">👴 Mudah</button>
+        <button class="tut-mode-btn"        id="btnModeTeknis" onclick="setTutMode('teknis')">⚙ Teknis</button>
+      </div>
+    </div>
+    <button class="tut-close" onclick="closeTutorial()">✕</button>
+  </div>
+
+  <!-- ══ MODE AWAM — WIZARD ══ -->
+  <div class="tut-wizard" id="wizardMode">
+
+    <!-- progress dots -->
+    <div class="wizard-progress">
+      <div class="wz-step"><div class="wz-dot active" id="wd0" onclick="goWizard(0)">1</div></div>
+      <div class="wz-step"><div class="wz-line" id="wl01"></div><div class="wz-dot" id="wd1" onclick="goWizard(1)">2</div></div>
+      <div class="wz-step"><div class="wz-line" id="wl12"></div><div class="wz-dot" id="wd2" onclick="goWizard(2)">3</div></div>
+      <div class="wz-step"><div class="wz-line" id="wl23"></div><div class="wz-dot" id="wd3" onclick="goWizard(3)">4</div></div>
+      <div class="wz-step"><div class="wz-line" id="wl34"></div><div class="wz-dot" id="wd4" onclick="goWizard(4)">5</div></div>
+    </div>
+
+    <div class="wizard-card">
+
+      <!-- SLIDE 0: Apa itu SeniorShield -->
+      <div id="ws0" class="wz-slide active">
+        <div class="wz-emoji" style="padding:24px 20px 0;"><img src="data:image/png;base64,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" style="width:clamp(140px,35vw,240px);height:auto;display:block;margin:0 auto 8px;mix-blend-mode:screen;" alt="Logo SeniorShield"/></div>
+        <div class="wz-main-title">Selamat Datang di <span class="hl">SeniorShield!</span></div>
+        <div class="wz-main-desc">Aplikasi ini bekerja seperti <strong style="color:var(--text)">satpam digital</strong> untuk HP Anda — ia membaca setiap SMS yang masuk dan <strong style="color:var(--text)">langsung berteriak</strong> kalau ada yang berbahaya.</div>
+        <div class="wz-phone-row">
+          <div class="wz-phone-img">
+            <div class="wz-phone-big">
+              <div class="notch"></div>
+              <div class="wz-phone-msg">
+                <div class="msender">+6281234567890</div>
+                Akun WA Anda akan diblokir! Klik: http://wa-verify.xyz
+              </div>
+              <div class="wz-phone-alert">🚨 PESAN BERBAHAYA!</div>
+            </div>
+            <div class="wz-phone-caption">Peringatan langsung muncul!</div>
+          </div>
+          <div class="wz-phone-steps">
+            <div class="wz-flow-step">
+              <div class="wz-flow-num">1</div>
+              <div class="wz-flow-text"><strong>SMS penipuan masuk</strong> ke HP</div>
+            </div>
+            <div class="wz-flow-step">
+              <div class="wz-flow-num">2</div>
+              <div class="wz-flow-text"><strong>SeniorShield membacanya</strong> dalam 1 detik</div>
+            </div>
+            <div class="wz-flow-step">
+              <div class="wz-flow-num">3</div>
+              <div class="wz-flow-text"><strong>Peringatan merah muncul</strong> di layar Anda</div>
+            </div>
+            <div class="wz-flow-step">
+              <div class="wz-flow-num">4</div>
+              <div class="wz-flow-text">Anda <strong>tidak perlu melakukan apa-apa</strong> — sudah terlindungi 🎉</div>
+            </div>
+          </div>
+        </div>
+        <div class="wz-nav">
+          <div style="flex:1"></div>
+          <button class="wz-btn-next" onclick="goWizard(1)">Lanjut → Kenali Penipuan</button>
+        </div>
+      </div>
+
+      <!-- SLIDE 1: Kenali Penipuan -->
+      <div id="ws1" class="wz-slide">
+        <div class="wz-emoji">🎭</div>
+        <div class="wz-main-title">Kenali <span class="hl">SMS Penipuan</span></div>
+        <div class="wz-main-desc">Penipu sering berpura-pura jadi bank, WhatsApp, atau bahkan keluarga Anda. SeniorShield sudah hafal pola-polanya!</div>
+        <div class="wz-checklist">
+          <div class="wz-check-item" style="border-left:3px solid var(--danger);">
+            <div class="wz-check-icon">🚫</div>
+            <div class="wz-check-body">
+              <div class="wz-check-title" style="color:var(--danger);">Contoh SMS BERBAHAYA</div>
+              <div class="wz-check-desc" style="background:rgba(255,77,77,.06);border-radius:8px;padding:10px;margin-top:6px;font-style:italic;">"Akun WhatsApp Anda akan diblokir! Verifikasi sekarang: http://wa-verify.xyz/login"</div>
+              <div class="wz-check-desc" style="margin-top:6px;">⚠️ Ciri-ciri: ada link mencurigakan, mengancam, minta klik segera</div>
+            </div>
+          </div>
+          <div class="wz-check-item" style="border-left:3px solid var(--danger);">
+            <div class="wz-check-icon">💸</div>
+            <div class="wz-check-body">
+              <div class="wz-check-title" style="color:var(--danger);">Contoh SMS BERBAHAYA</div>
+              <div class="wz-check-desc" style="background:rgba(255,77,77,.06);border-radius:8px;padding:10px;margin-top:6px;font-style:italic;">"Kode OTP Anda: 847231. Jangan beritahu siapapun. Transfer dana ke rekening ini."</div>
+              <div class="wz-check-desc" style="margin-top:6px;">⚠️ Ciri-ciri: minta kode OTP, minta transfer uang</div>
+            </div>
+          </div>
+          <div class="wz-check-item" style="border-left:3px solid var(--ok);">
+            <div class="wz-check-icon">✅</div>
+            <div class="wz-check-body">
+              <div class="wz-check-title" style="color:var(--ok);">Contoh SMS AMAN</div>
+              <div class="wz-check-desc" style="background:rgba(0,255,136,.06);border-radius:8px;padding:10px;margin-top:6px;font-style:italic;">"Halo Bu! Ini Rini. Jadi kumpul besok ya di rumah Sari?"</div>
+              <div class="wz-check-desc" style="margin-top:6px;">✓ Tidak ada link, tidak minta data, dari orang yang dikenal</div>
+            </div>
+          </div>
+        </div>
+        <div class="wz-banner danger">
+          <div class="wz-banner-icon">🚨</div>
+          <div class="wz-banner-text"><strong>Bank dan WhatsApp TIDAK PERNAH</strong> meminta kode OTP, PIN, atau klik link untuk verifikasi lewat SMS. Kalau ada yang seperti itu — itu penipuan!</div>
+        </div>
+        <div class="wz-nav">
+          <button class="wz-btn-back" onclick="goWizard(0)">← Kembali</button>
+          <button class="wz-btn-next" onclick="goWizard(2)">Mengerti! Lanjut →</button>
+        </div>
+      </div>
+
+      <!-- SLIDE 2: Hubungkan dashboard -->
+      <div id="ws2" class="wz-slide">
+        <div class="wz-emoji">🔌</div>
+        <div class="wz-main-title">Langkah 1: <span class="hl">Jalankan Server</span></div>
+        <div class="wz-main-desc">Server adalah "otak" penganalisa SMS. Hubungi anggota keluarga yang paham teknologi untuk membantu langkah ini jika perlu.</div>
+        <div class="wz-checklist">
+          <div class="wz-check-item">
+            <div class="wz-check-icon">📦</div>
+            <div class="wz-check-body">
+              <div class="wz-check-title">Install Node.js di komputer</div>
+              <div class="wz-check-desc">Buka situs <strong>nodejs.org</strong> → klik tombol <strong>hijau besar Download</strong> → install seperti biasa.</div>
+              <span class="wz-check-tag">nodejs.org/en/download</span>
+            </div>
+          </div>
+          <div class="wz-check-item">
+            <div class="wz-check-icon">⌨️</div>
+            <div class="wz-check-body">
+              <div class="wz-check-title">Buka Command Prompt, ketik 3 perintah ini</div>
+              <span class="wz-code-inline">cd Desktop\seniorshield</span>
+              <span class="wz-code-inline">npm install</span>
+              <span class="wz-code-inline">npm start</span>
+              <div class="wz-check-desc" style="margin-top:8px;">Berhasil kalau muncul: <strong style="color:var(--ok)">✅ HTTP : http://localhost:3000</strong></div>
+            </div>
+          </div>
+          <div class="wz-check-item">
+            <div class="wz-check-icon">⚙️</div>
+            <div class="wz-check-body">
+              <div class="wz-check-title">Di dashboard — klik "⚙ Pengaturan API"</div>
+              <div class="wz-check-desc">Tombol ada di pojok kanan atas. Isi 2 kolom berikut:</div>
+              <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px;">
+                <div style="background:#060d1a;border-radius:8px;padding:10px 12px;font-size:13px;border:1px solid rgba(0,242,255,.1);">
+                  <span style="color:var(--muted);font-size:11px;">URL Server</span><br/>
+                  <span style="color:var(--cyan);font-family:'JetBrains Mono',monospace;">ws://localhost:3001</span>
+                </div>
+                <div style="background:#060d1a;border-radius:8px;padding:10px 12px;font-size:13px;border:1px solid rgba(0,242,255,.1);">
+                  <span style="color:var(--muted);font-size:11px;">API Key</span><br/>
+                  <span style="color:var(--cyan);font-family:'JetBrains Mono',monospace;">seniorshield-secret-key</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="wz-check-item">
+            <div class="wz-check-icon">💾</div>
+            <div class="wz-check-body">
+              <div class="wz-check-title">Klik tombol "💾 Simpan & Jalankan Otomatis"</div>
+              <div class="wz-check-desc">Dashboard akan <strong>otomatis terhubung dan langsung mulai memantau</strong>. Titik <strong style="color:var(--ok)">hijau ●</strong> akan menyala — tanda sistem aktif!</div>
+            </div>
+          </div>
+        </div>
+        <div class="wz-banner warn">
+          <div class="wz-banner-icon">⚠️</div>
+          <div class="wz-banner-text"><strong>Jangan tutup jendela Command Prompt!</strong> Server harus tetap berjalan selama pakai dashboard. Kalau tutup, monitoring berhenti.</div>
+        </div>
+        <div class="wz-nav">
+          <button class="wz-btn-back" onclick="goWizard(1)">← Kembali</button>
+          <button class="wz-btn-next" onclick="goWizard(3)">Server Sudah Jalan →</button>
+        </div>
+      </div>
+
+      <!-- SLIDE 3: Android -->
+      <div id="ws3" class="wz-slide">
+        <div class="wz-emoji">📱</div>
+        <div class="wz-main-title">Langkah 2: <span class="hl">Sambungkan HP Android</span></div>
+        <div class="wz-main-desc">Agar SMS dari HP langsung terbaca oleh SeniorShield, install satu aplikasi kecil di Android Anda:</div>
+        <div class="wz-methods">
+          <div class="wz-method open" id="wm0">
+            <div class="wz-method-head">
+              <span class="wz-method-icon">📲</span>
+              <div>
+                <div class="wz-method-name">SMS Forwarder App</div>
+                <span class="wz-method-badge">⭐ PALING MUDAH — GRATIS</span>
+              </div>
+            </div>
+            <div class="wz-method-desc">Install dari Play Store, tidak perlu coding, langsung bisa dipakai.</div>
+            <div class="wz-method-steps">
+              <div class="wz-method-step"><div class="wz-method-step-num">1</div><div>Buka <strong>Play Store</strong> di HP Android → cari <strong>"SMS Forwarder"</strong> → Install</div></div>
+              <div class="wz-method-step"><div class="wz-method-step-num">2</div><div>Buka aplikasinya → ketuk tombol <strong>➕ Add Rule</strong> atau <strong>+ Tambah</strong></div></div>
+              <div class="wz-method-step"><div class="wz-method-step-num">3</div><div>Pilih tipe: <strong>HTTP POST</strong></div></div>
+              <div class="wz-method-step"><div class="wz-method-step-num">4</div><div>Di kolom <strong>URL</strong>, isi:<span class="wz-code-inline">http://IP-KOMPUTER:3000/api/sms/incoming</span><div style="font-size:12px;color:var(--muted);margin-top:4px;">💡 IP komputer: buka Command Prompt → ketik <strong>ipconfig</strong> → cari angka seperti 192.168.1.5</div></div></div>
+              <div class="wz-method-step"><div class="wz-method-step-num">5</div><div>Tambah Header:<span class="wz-code-inline">Authorization: Bearer seniorshield-secret-key</span></div></div>
+              <div class="wz-method-step"><div class="wz-method-step-num">6</div><div>Body (tempel persis seperti ini):<span class="wz-code-inline">{"sender":"{sender}","body":"{body}"}</span></div></div>
+              <div class="wz-method-step"><div class="wz-method-step-num">7</div><div>Ketuk <strong>💾 Simpan</strong> — selesai! 🎉 Setiap SMS masuk akan langsung terdeteksi otomatis</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="wz-banner info">
+          <div class="wz-banner-icon">👨‍👩‍👧</div>
+          <div class="wz-banner-text">Minta bantuan anggota keluarga yang lebih muda untuk membantu setup HP Android ini. Cukup sekali, setelah itu berjalan otomatis!</div>
+        </div>
+        <div class="wz-nav">
+          <button class="wz-btn-back" onclick="goWizard(2)">← Kembali</button>
+          <button class="wz-btn-next" onclick="goWizard(4)">Selesai Setup →</button>
+        </div>
+      </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="wz-banner info">
+          <div class="wz-banner-icon">💡</div>
+          <div class="wz-banner-text"><strong>Cara cari IP Komputer:</strong> Buka Terminal, ketik <code style="color:var(--cyan)">ipconfig</code> (Windows) atau <code style="color:var(--cyan)">ifconfig</code> (Mac/Linux). Cari angka seperti 192.168.1.xxx</div>
+        </div>
+        <div class="wz-nav">
+          <button class="wz-btn-back" onclick="goWizard(2)">← Kembali</button>
+          <button class="wz-btn-next" onclick="goWizard(4)">Selesai Setup &nbsp; →</button>
+        </div>
+      </div>
+
+      <!-- SLIDE 4: Done -->
+      <div id="ws4" class="wz-slide">
+        <div class="wz-emoji">🎉</div>
+        <div class="wz-main-title"><span class="hl">SeniorShield Aktif!</span></div>
+        <div class="wz-main-desc">Selamat! Sistem perlindungan sudah berjalan. Berikut yang perlu Anda ingat:</div>
+        <div class="wz-checklist">
+          <div class="wz-check-item">
+            <div class="wz-check-icon">🟢</div>
+            <div class="wz-check-body">
+              <div class="wz-check-title">Titik hijau = sistem aktif memantau</div>
+              <div class="wz-check-desc">Selalu pastikan ada titik hijau di pojok kiri atas dashboard. Kalau merah, berarti koneksi terputus.</div>
+            </div>
+          </div>
+          <div class="wz-check-item">
+            <div class="wz-check-icon">🚨</div>
+            <div class="wz-check-body">
+              <div class="wz-check-title">Popup merah = pesan berbahaya terdeteksi</div>
+              <div class="wz-check-desc">Kalau ada popup merah muncul, <strong>jangan klik link</strong> yang ada di SMS tersebut. Ketuk "Blokir" untuk memblokir nomor pengirim.</div>
+            </div>
+          </div>
+          <div class="wz-check-item">
+            <div class="wz-check-icon">🧪</div>
+            <div class="wz-check-body">
+              <div class="wz-check-title">Tombol "🧪 Uji" untuk tes sistem</div>
+              <div class="wz-check-desc">Kapan saja bisa klik tombol Uji untuk memastikan sistem masih berjalan dengan baik.</div>
+            </div>
+          </div>
+          <div class="wz-check-item">
+            <div class="wz-check-icon">📩</div>
+            <div class="wz-check-body">
+              <div class="wz-check-title">Scan Manual juga tersedia</div>
+              <div class="wz-check-desc">Kalau menerima SMS mencurigakan, bisa copy-paste pesannya ke kolom Scan Manual dan klik Scan.</div>
+            </div>
+          </div>
+        </div>
+        <div class="wz-banner info">
+          <div class="wz-banner-icon">📞</div>
+          <div class="wz-banner-text"><strong>Ingat:</strong> Bank dan WhatsApp resmi <strong>tidak pernah</strong> meminta kode OTP, PIN, atau meminta Anda klik link untuk verifikasi melalui SMS.</div>
+        </div>
+        <div class="wz-nav">
+          <button class="wz-btn-back" onclick="goWizard(3)">← Kembali</button>
+          <button class="wz-btn-done" onclick="closeTutorial()">✓ Mengerti, Mulai Pantau!</button>
+        </div>
+      </div>
+
+    </div><!-- /.wizard-card -->
+  </div><!-- /.tut-wizard -->
+
+  <!-- ══ MODE TEKNIS ══ -->
+  <div class="tut-tech" id="techMode">
+    <div class="tut-tabs">
+      <button class="tut-tab active" onclick="showTT('tt1',this)">🚀 Quick Start</button>
+      <button class="tut-tab"        onclick="showTT('tt2',this)">📡 API Endpoints</button>
+      <button class="tut-tab"        onclick="showTT('tt3',this)">📱 Android</button>
+      <button class="tut-tab"        onclick="showTT('tt4',this)">☁ Deploy</button>
+      <button class="tut-tab"        onclick="showTT('tt5',this)">🔒 Keamanan</button>
+    </div>
+
+    <!-- tt1 -->
+    <div id="tt1" class="tt-section active">
+      <div class="tt-hero"><h2>🚀 Setup dalam 5 Menit</h2><p>SeniorShield terdiri dari Frontend (dashboard) + Backend API (server.js). Setelah API disimpan, dashboard <strong>otomatis terhubung dan mulai memantau</strong>.</p></div>
+      <div class="step-list">
+        <div class="step-item"><div class="step-num">1</div><div class="step-content"><div class="step-title">Install dependensi</div><div class="code-block"><button class="copy-btn" onclick="cpCode(this)">Copy</button>npm install</div></div></div>
+        <div class="step-item"><div class="step-num">2</div><div class="step-content"><div class="step-title">Buat .env</div><div class="code-block"><button class="copy-btn" onclick="cpCode(this)">Copy</button>cp .env.example .env
+# Edit API_KEY di file .env</div></div></div>
+        <div class="step-item"><div class="step-num">3</div><div class="step-content"><div class="step-title">Jalankan server</div><div class="code-block"><button class="copy-btn" onclick="cpCode(this)">Copy</button>npm start
+# ✅ HTTP  : http://localhost:3000
+# ✅ WS    : ws://localhost:3001</div></div></div>
+        <div class="step-item"><div class="step-num">4</div><div class="step-content"><div class="step-title">Sambungkan dashboard → klik ⚙ API → isi URL & Key → Simpan</div><div class="step-desc">Dashboard akan <strong>otomatis connect dan start monitoring</strong>. Config tersimpan di localStorage.</div></div></div>
+        <div class="step-item"><div class="step-num">5</div><div class="step-content"><div class="step-title">Test</div><div class="code-block"><button class="copy-btn" onclick="cpCode(this)">Copy</button>curl -X POST http://localhost:3000/api/sms/test</div></div></div>
+      </div>
+    </div>
+
+    <!-- tt2 -->
+    <div id="tt2" class="tt-section">
+      <div class="tt-hero"><h2>📡 Endpoint API</h2><p>Semua endpoint JSON. Auth: <code style="color:var(--cyan)">Authorization: Bearer API_KEY</code></p></div>
+      <div class="endpoint-list">
+        <div class="endpoint-item"><div class="endpoint-head"><span class="tag tag-post">POST</span><span class="endpoint-path">/api/sms/incoming</span><span style="font-size:10px;color:var(--danger)">🔒 Auth</span></div><div class="endpoint-desc">Terima SMS dari Android. Server analisis → broadcast WS.</div><div class="code-block" style="margin-top:8px;"><button class="copy-btn" onclick="cpCode(this)">Copy</button>curl -X POST http://localhost:3000/api/sms/incoming \
+  -H "Authorization: Bearer seniorshield-secret-key" \
+  -H "Content-Type: application/json" \
+  -d '{"sender":"+6281234","body":"Verifikasi akun: http://wa-hack.xyz"}'</div></div>
+        <div class="endpoint-item"><div class="endpoint-head"><span class="tag tag-post">POST</span><span class="endpoint-path">/api/sms/test</span><span style="font-size:10px;color:var(--ok)">✓ Public</span></div><div class="endpoint-desc">Kirim pesan uji acak tanpa auth — untuk test koneksi dashboard.</div></div>
+        <div class="endpoint-item"><div class="endpoint-head"><span class="tag tag-get">GET</span><span class="endpoint-path">/api/sms/latest?since=ISO&amp;limit=50&amp;risk=all</span><span style="font-size:10px;color:var(--danger)">🔒 Auth</span></div><div class="endpoint-desc">Polling — ambil pesan baru sejak timestamp tertentu.</div></div>
+        <div class="endpoint-item"><div class="endpoint-head"><span class="tag tag-get">GET</span><span class="endpoint-path">/api/status</span><span style="font-size:10px;color:var(--ok)">✓ Public</span></div><div class="endpoint-desc">Health check. Kembalikan uptime, jumlah pesan, klien WS.</div></div>
+        <div class="endpoint-item"><div class="endpoint-head"><span class="tag tag-del">DEL</span><span class="endpoint-path">/api/sms/clear</span><span style="font-size:10px;color:var(--danger)">🔒 Auth</span></div><div class="endpoint-desc">Hapus semua log dan reset statistik.</div></div>
+      </div>
+      <div class="tt-hero" style="margin-top:20px;"><h2>⚡ WebSocket</h2><p>Connect ke <code style="color:var(--cyan)">ws://localhost:3001?token=API_KEY</code> — server push setiap pesan baru dalam &lt;100ms.</p></div>
+      <div class="code-block"><button class="copy-btn" onclick="cpCode(this)">Copy</button>const ws = new WebSocket('ws://localhost:3001?token=seniorshield-secret-key');
+ws.onmessage = (ev) => {
+  const msgs = JSON.parse(ev.data); // array
+  msgs.forEach(m => console.log(m.sender, m.riskLevel, m.score));
+};</div>
+    </div>
+
+    <!-- tt3 -->
+    <div id="tt3" class="tt-section">
+      <div class="tt-hero"><h2>📱 Integrasi Android</h2></div>
+      <div class="step-list">
+        <div class="step-item"><div class="step-num">A</div><div class="step-content"><div class="step-title">SMS Forwarder App (termudah)</div><div class="code-block"><button class="copy-btn" onclick="cpCode(this)">Copy</button>URL    : http://IP-SERVER:3000/api/sms/incoming
+Method : POST
+Header : Authorization: Bearer seniorshield-secret-key
+Body   : {"sender":"{sender}","body":"{body}"}</div></div></div>
+        <div class="step-item"><div class="step-num">B</div><div class="step-content"><div class="step-title">Tasker + AutoHttp</div><div class="code-block"><button class="copy-btn" onclick="cpCode(this)">Copy</button">Profile: Event → Received Text
+Action : AutoHttp POST
+URL    : http://IP:3000/api/sms/incoming
+Body   : {"sender":"%SMSRN","body":"%SMSRB"}</div></div></div>
+        <div class="step-item"><div class="step-num">C</div><div class="step-content"><div class="step-title">Android Native (Java/Kotlin)</div><div class="code-block"><button class="copy-btn" onclick="cpCode(this)">Copy</button">// AndroidManifest.xml
+&lt;uses-permission android:name="android.permission.RECEIVE_SMS"/&gt;
+&lt;uses-permission android:name="android.permission.INTERNET"/&gt;
+
+// SmsReceiver.java — onReceive:
+sendToAPI(msg.getOriginatingAddress(), msg.getMessageBody());
+
+void sendToAPI(String sender, String body) {
+  // POST http://IP:3000/api/sms/incoming
+  // Header: Authorization: Bearer KEY
+  // Body: {"sender":"...","body":"..."}
+}</div></div></div>
+      </div>
+    </div>
+
+    <!-- tt4 -->
+    <div id="tt4" class="tt-section">
+      <div class="tt-hero"><h2>☁ Deploy Cloud</h2></div>
+      <div class="step-list">
+        <div class="step-item"><div class="step-num">🚂</div><div class="step-content"><div class="step-title">Railway (Recommended)</div><div class="code-block"><button class="copy-btn" onclick="cpCode(this)">Copy</button>npm i -g @railway/cli
+railway login && railway init && railway up
+# Set env: PORT=3000, WS_PORT=3001, API_KEY=xxx</div></div></div>
+        <div class="step-item"><div class="step-num">🐳</div><div class="step-content"><div class="step-title">Docker</div><div class="code-block"><button class="copy-btn" onclick="cpCode(this)">Copy</button>docker compose up -d</div></div></div>
+        <div class="step-item"><div class="step-num">⚡</div><div class="step-content"><div class="step-title">Render.com — render.yaml sudah disertakan</div><div class="info-box">Setelah deploy cloud: ganti <code style="color:var(--cyan)">ws://</code> → <code style="color:var(--cyan)">wss://</code> dan <code style="color:var(--cyan)">http://</code> → <code style="color:var(--cyan)">https://</code></div></div></div>
+      </div>
+    </div>
+
+    <!-- tt5 -->
+    <div id="tt5" class="tt-section">
+      <div class="tt-hero"><h2>🔒 Keamanan</h2></div>
+      <div class="step-list">
+        <div class="step-item"><div class="step-num">1</div><div class="step-content"><div class="step-title">Generate API Key kuat</div><div class="code-block"><button class="copy-btn" onclick="cpCode(this)">Copy</button>node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"</div></div></div>
+        <div class="step-item"><div class="step-num">2</div><div class="step-content"><div class="step-title">Gunakan HTTPS/WSS di production</div><div class="step-desc">Platform cloud (Railway, Render) otomatis SSL. Self-host: pakai nginx + Let's Encrypt.</div></div></div>
+        <div class="step-item"><div class="step-num">3</div><div class="step-content"><div class="step-title">Jangan commit .env ke Git</div><div class="code-block"><button class="copy-btn" onclick="cpCode(this)">Copy</button"># .gitignore sudah ada:
+.env
+node_modules/</div></div></div>
+      </div>
+      <div class="danger-box">🚨 <strong>Data SMS sensitif!</strong> Jangan expose port 3000/3001 tanpa proteksi. Selalu ganti API_KEY default.</div>
+    </div>
+
+  </div><!-- /.tut-tech -->
+</section>
+
+<div id="popupWrap"></div>
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- ════════════════════════════ JS ════════════════════════════ -->
+<script>
+/* ─── DATABASES ─── */
+const NFC_DB=[{uid:"04:a3:b2:c1",name:"Admin Utama"},{uid:"04:12:34:56",name:"Staff 1"},{uid:"04:ab:cd:ef",name:"Staff 2"}];
+const USER_DB=[{username:"admin",password:"1234"},{username:"seniorshield",password:"sahabatselamanya"}];
+const KW=["hadiah","klik link","verifikasi akun","akun diblokir","transfer sekarang","menang undian","gratis saldo","bank","pin","otp","kode verifikasi","whatsapp support","login dari perangkat baru","reset password","data anda","segera","urgent","konfirmasi","perangkat baru","terkena hack","kode rahasia","jangan beritahu","transfer dana","rekening"];
+const BD=[".xyz",".top",".click",".gq",".ru",".tk",".cf",".ml",".ga"];
+
+const DEMO_MSGS=[
+  {sender:"+6281111111111",body:"Akun WhatsApp Anda akan diblokir! Verifikasi sekarang: http://wa-verify.xyz/login",type:"danger"},
+  {sender:"+6282222222222",body:"Kode OTP Anda: 847231. Jangan beritahu siapapun. Transfer dana ke rekening ini.",type:"warning"},
+  {sender:"Ibu Sari",      body:"Halo! Apa kabar? Jadi kumpul di rumah besok?",type:"safe"},
+  {sender:"+6283333333333",body:"Hadiah undian 50 juta menunggu! Klik: http://hadiah.top/klaim?id=12345",type:"danger"},
+];
+const SIM_MSGS=[
+  {sender:"+6281111111111",body:"Akun WhatsApp Anda akan diblokir! Verifikasi sekarang: http://wa-verify.xyz/login"},
+  {sender:"+6282222222222",body:"Kode OTP Anda: 847231. Jangan beritahu siapapun. Transfer dana sekarang."},
+  {sender:"+6283333333333",body:"Hadiah undian 50 juta menunggu! Klik: http://hadiah.top/klaim?id=12345"},
+  {sender:"Teman Lama",    body:"Halo! Apa kabar? Jadi kumpul minggu depan?"},
+  {sender:"+6285555555555",body:"PIN ATM direset karena login perangkat baru. Hubungi 1234 sekarang."},
+  {sender:"WA Support",    body:"Akun dihapus 24 jam. Klik: http://whatsapp-support.gq/save"},
+  {sender:"+6287777777777",body:"Mama ini aku nomor baru. Tolong transfer ke rekening ini dulu ya."},
+];
+
+/* ─── STATE ─── */
+const g=id=>document.getElementById(id);
+let highC=0,medC=0,lowC=0,totalC=0,simIdx=0;
+let ws=null,pollTimer=null,lastPoll=new Date().toISOString(),userDisconnected=false,demoStartedManually=false;
+let seenIds=new Set();
+let cfg={mode:"ws",url:"",key:"seniorshield-secret-key",interval:5,minRisk:30};
+let demoRunning=false,demoStep=0,demoTimer=null;
+let wizardStep=0;
+
+/* ─── NAV ─── */
+function showLogin(){g("homePage").classList.add("hidden");g("loginPage").classList.remove("hidden");}
+function showDashboard(){
+  g("loginPage").classList.add("hidden");
+  g("dashboard").classList.remove("hidden");
+  loadLogs();
+  if(Notification.permission==="default")Notification.requestPermission();
+  // Auto-load saved config & connect
+  try{
+    const s=JSON.parse(localStorage.getItem("ss_cfg")||"{}");
+    if(s.url){
+      Object.assign(cfg,s);
+      g("apiUrl").value=s.url||"";
+      g("apiKey").value=s.key||"seniorshield-secret-key";
+      g("apiMode").value=s.mode||"ws";
+      g("apiInterval").value=s.interval||5;
+      g("apiMinRisk").value=s.minRisk||30;
+      // Auto-connect setelah 800ms
+      setTimeout(()=>{connectAPI();toast("Monitor Otomatis Dimulai","Memantau SMS secara real-time 🛡","low");},800);
+    } else {
+      // Belum ada konfigurasi → langsung simulasi otomatis setelah 2 detik
+      setTimeout(()=>{
+        startSimMode();
+        // Juga buka panel API dengan sedikit delay supaya user tahu harus isi URL
+        setTimeout(()=>{
+          g("apiPanel").classList.remove("hidden");
+          runDemo();
+          toast("💡 Belum ada server?","Klik ⚙ Pengaturan API → isi URL server Anda","low");
+        },1500);
+      },2000);
+    }
+  }catch(e){}
+}
+function showTab(id,btn){
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+  g("tabPwd").classList.add("hidden");g("tabNFC").classList.add("hidden");
+  g(id).classList.remove("hidden");btn.classList.add("active");
+}
+function doLogout(){disconnectAPI();location.reload();}
+
+/* ─── LOGIN ─── */
+function doLogin(){
+  const u=g("user").value.trim(),p=g("pass").value;
+  if(USER_DB.find(x=>x.username===u&&x.password===p))showDashboard();
+  else alert("Username atau password salah.");
+}
+document.addEventListener("DOMContentLoaded",()=>{
+  ["user","pass"].forEach(id=>g(id).addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();}));
+});
+
+/* ─── NFC ─── */
+let nfcAC=null;
+async function startNFC(){
+  const btn=g("nfcBtn"),badge=g("nfcBadge"),uid=g("nfcUID"),hint=g("nfcHint");
+  if(!("NDEFReader" in window)){setNS("error");badge.textContent="● NFC Tidak Didukung";uid.textContent="Gunakan Chrome 89+ Android.";return;}
+  try{
+    btn.disabled=true;btn.textContent="Scanning...";setNS("scanning");badge.textContent="● SCANNING...";
+    uid.textContent="Menunggu kartu...";uid.classList.remove("found");hint.textContent="Tempelkan kartu ke ponsel";
+    nfcAC=new AbortController();const r=new NDEFReader();
+    await r.scan({signal:nfcAC.signal});
+    r.addEventListener("reading",({serialNumber})=>{
+      uid.textContent="UID: "+serialNumber.toUpperCase();uid.classList.add("found");
+      const m=NFC_DB.find(e=>e.uid.toLowerCase()===serialNumber.toLowerCase());
+      if(m){setNS("success");badge.textContent="✓ TERVERIFIKASI";hint.textContent="Selamat datang, "+m.name+"!";if(nfcAC)nfcAC.abort();setTimeout(()=>showDashboard(),1200);}
+      else{setNS("error");badge.textContent="✗ TIDAK DIKENAL";hint.textContent="Kartu tidak terdaftar.";if(nfcAC)nfcAC.abort();setTimeout(()=>{btn.disabled=false;btn.textContent="Mulai Scan NFC";},2800);}
+    });
+  }catch(e){
+    badge.textContent=e.name==="NotAllowedError"?"● Izin Ditolak":e.name==="AbortError"?"● Dibatalkan":"● Error";
+    uid.textContent=e.name==="NotAllowedError"?"Aktifkan izin NFC.":e.name==="AbortError"?"Dibatalkan.":e.message;
+    setNS("error");hint.textContent="";btn.disabled=false;btn.textContent="Mulai Scan NFC";
+  }
+}
+function setNS(s){g("nfcRings").className="nfc-rings"+(s?" "+s:"");g("nfcBadge").className="nfc-badge"+(s?" "+s:"");}
+
+/* ─── TUTORIAL ─── */
+function openTutorial(){
+  g("apiPanel").classList.add("hidden");
+  g("tutorialPage").classList.remove("hidden");
+  // do not set body overflow - breaks fixed popups on iOS
+  setTutMode("awam");
+}
+function closeTutorial(){
+  g("tutorialPage").classList.add("hidden");
+  // body overflow was not set
+}
+function setTutMode(mode){
+  const isAwam=mode==="awam";
+  g("wizardMode").style.display=isAwam?"block":"none";
+  g("techMode").classList.toggle("active",!isAwam);
+  g("btnModeAwam").classList.toggle("active",isAwam);
+  g("btnModeTeknis").classList.toggle("active",!isAwam);
+}
+function goWizard(n){
+  // hide current, show new
+  g("ws"+wizardStep).classList.remove("active");
+  g("ws"+n).classList.add("active");
+  // update dots
+  for(let i=0;i<5;i++){
+    const d=g("wd"+i);
+    d.classList.remove("active","done");
+    if(i<n)d.classList.add("done");
+    else if(i===n)d.classList.add("active");
+    if(i<4){const l=g("wl"+i+(i+1));if(l)l.classList.toggle("done",i<n);}
+  }
+  wizardStep=n;
+  g("tutorialPage").scrollTo({top:0,behavior:"smooth"});
+}
+function showTT(id,btn){
+  document.querySelectorAll(".tut-tab").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".tt-section").forEach(s=>s.classList.remove("active"));
+  g(id).classList.add("active");btn.classList.add("active");
+}
+// toggle method steps
+document.addEventListener("click",e=>{
+  const m=e.target.closest(".wz-method");
+  if(m&&!e.target.closest(".wz-method-steps")){
+    m.classList.toggle("open");
+  }
+});
+function cpCode(btn){
+  const block=btn.closest(".code-block");
+  const text=block.innerText.replace(/^Copy\n/,"");
+  navigator.clipboard.writeText(text).then(()=>{btn.textContent="✓";setTimeout(()=>{btn.textContent="Copy";},2000);}).catch(()=>{});
+}
+
+/* ─── DEMO ─── */
+function runDemo(){
+  if(demoRunning)return;
+  demoStartedManually=true;
+  demoRunning=true;demoStep=0;
+  if(demoTimer){clearTimeout(demoTimer);demoTimer=null;}
+  const btn=g("demoBtn");
+  btn.disabled=true;btn.textContent="⏳ Sedang diputar...";
+  g("demoScreen").innerHTML="";
+  g("demoBar").style.width="0";
+  g("demoFooter").textContent="SMS masuk...";
+  document.querySelectorAll(".demo-msg-item").forEach(el=>el.classList.remove("active"));
+  setTimeout(playDemoStep,600);
+}
+function playDemoStep(){
+  if(demoStep>=DEMO_MSGS.length){
+    g("demoBtn").disabled=false;g("demoBtn").textContent="▶ Putar Ulang";
+    g("demoBar").style.width="100%";
+    g("demoFooter").textContent="✓ Demo selesai!";
+    demoRunning=false;demoStartedManually=false;return;
+  }
+  const m=DEMO_MSGS[demoStep];
+  const pct=Math.round(((demoStep+1)/DEMO_MSGS.length)*100);
+  g("demoBar").style.width=pct+"%";
+  // highlight list item
+  document.querySelectorAll(".demo-msg-item").forEach((el,i)=>el.classList.toggle("active",i===demoStep));
+
+  const screen=g("demoScreen");
+  // Show bubble
+  const bubble=document.createElement("div");
+  bubble.className="sms-bubble "+m.type;
+  bubble.innerHTML=`<div class="sms-sender">${esc(m.sender)}</div>${esc(m.body.substring(0,55)+(m.body.length>55?"...":""))}`;
+  screen.appendChild(bubble);
+  screen.scrollTop=screen.scrollHeight;
+
+  // scanning dots
+  setTimeout(()=>{
+    const scan=document.createElement("div");
+    scan.className="sms-scanning";
+    scan.innerHTML=`<div class="sms-dots"><div class="sms-dot"></div><div class="sms-dot"></div><div class="sms-dot"></div></div> Menganalisis...`;
+    bubble.appendChild(scan);
+
+    // result after 900ms
+    setTimeout(()=>{
+      scan.remove();
+      const res=document.createElement("div");
+      if(m.type==="safe"){
+        res.className="sms-result safe";res.textContent="✓ AMAN";
+      }else if(m.type==="warning"){
+        res.className="sms-result danger";res.textContent="⚠ WASPADA";
+        // show real toast for non-safe
+        toast("Pesan Mencurigakan","📱 "+m.sender,"medium");
+      }else{
+        res.className="sms-result danger";res.textContent="🚨 BAHAYA";
+        // trigger real popup
+        const an=analyze(m.body);
+        showPopup({sender:m.sender,body:m.body,score:an.score,status:an.status,keywords:an.found,riskLevel:"high",timestamp:new Date().toISOString()});
+        toast("Ancaman Terdeteksi","📱 "+m.sender,"high");
+        highC++;updateChart();
+      }
+      bubble.appendChild(res);
+      screen.scrollTop=screen.scrollHeight;
+      g("demoFooter").textContent="Pesan "+(demoStep+1)+"/"+DEMO_MSGS.length+" — "+( m.type==="danger"?"🚨 BERBAHAYA!":m.type==="warning"?"⚠️ Waspada":"✅ Aman");
+
+      // next step
+      demoStep++;
+      demoTimer=setTimeout(playDemoStep,1800);
+    },900);
+  },400);
+}
+
+/* ─── API CONFIG ─── */
+function toggleApiPanel(){
+  const panel=g("apiPanel");
+  const isHidden=panel.classList.contains("hidden");
+  panel.classList.toggle("hidden");
+  // Auto-play demo when panel OPENS (after 600ms delay)
+  if(isHidden){
+    setTimeout(()=>{
+      if(!demoRunning && g("demoScreen") && g("demoScreen").querySelectorAll(".sms-bubble").length===0){
+        runDemo();
+      }
+    },600);
+  }
+}
+function saveApiCfg(){
+  cfg.mode=g("apiMode").value;
+  cfg.url=g("apiUrl").value.trim();
+  cfg.key=g("apiKey").value.trim();
+  cfg.interval=parseInt(g("apiInterval").value)||5;
+  cfg.minRisk=parseInt(g("apiMinRisk").value)||30;
+  try{localStorage.setItem("ss_cfg",JSON.stringify(cfg));}catch(e){}
+  setApiSt("💾 Disimpan — menghubungkan otomatis...");
+  g("apiPanel").classList.add("hidden");
+  // AUTO-CONNECT immediately
+  if(simTimer){clearInterval(simTimer);simTimer=null;}
+  setTimeout(()=>{
+    connectAPI();
+    toast("✅ Pengaturan Disimpan","Monitoring otomatis dimulai! 🛡","low");
+  },300);
+}
+function setApiSt(t){g("apiSt").textContent="Status: "+t;}
+
+async function pingServer(){
+  const urlVal=g("apiUrl").value.trim();
+  if(!urlVal){setApiSt("❌ Isi URL server dulu");return;}
+  const base=urlVal.replace(/^ws:/,"http:").replace(/^wss:/,"https:").replace(/\/ws$/,"").replace(/\/api.*/,"");
+  setApiSt("🔄 Memeriksa koneksi ke server...");
+  try{
+    const r=await fetch(base+"/api/status",{signal:AbortSignal.timeout(5000)});
+    const d=await r.json();
+    setApiSt("✅ Server aktif — uptime: "+d.uptime+" | "+d.messages+" pesan tersimpan");
+  }catch(e){
+    setApiSt("❌ Server tidak terdeteksi — pastikan npm start sudah berjalan");
+  }
+}
+
+/* ─── CONNECT ─── */
+function connectAPI(){userDisconnected=false;
+  if(!cfg.url){
+    // No URL → fallback ke mode simulasi otomatis
+    startSimMode();
+    return;
+  }
+  disconnectAPI();
+  cfg.mode==="ws"?connectWS():startPoll();
+}
+
+function disconnectAPI(){userDisconnected=true;
+  // Stop WebSocket
+  if(ws){try{ws.close();}catch(e){}ws=null;}
+  // Stop HTTP polling
+  if(pollTimer){clearInterval(pollTimer);pollTimer=null;}
+  // Stop simulation timer
+  if(simTimer){clearInterval(simTimer);simTimer=null;}
+  // Stop demo hanya jika demo belum pernah dimulai manual
+  if(!demoStartedManually){
+    demoRunning=false;
+    if(demoTimer){clearTimeout(demoTimer);demoTimer=null;}
+    const demoBtn=document.getElementById("demoBtn");
+    if(demoBtn){demoBtn.disabled=false;demoBtn.textContent="▶ Putar Demo";}
+    const demoBar=document.getElementById("demoBar");
+    if(demoBar)demoBar.style.width="0";
+    const demoFooter=document.getElementById("demoFooter");
+    if(demoFooter)demoFooter.textContent="Menunggu demo...";
+    const demoScreen=document.getElementById("demoScreen");
+    if(demoScreen)demoScreen.innerHTML="";
+    document.querySelectorAll(".demo-msg-item").forEach(el=>el.classList.remove("active"));
+  }
+  setConn("","Status: <b>Terputus</b>");
+}
+
+// Auto-simulation mode (jika tidak ada URL)
+let simTimer=null;
+function startSimMode(forced){
+  if(simTimer&&!forced)return;
+  setConn("simulating","Status: <b style='color:var(--cyan)'>Mode Simulasi Aktif</b>");
+  setApiSt("🧪 Mode simulasi — pesan demo setiap 12 detik");
+  toast("Mode Simulasi","Tidak ada server — menjalankan demo otomatis","low");
+  simTimer=setInterval(()=>{
+    const m=SIM_MSGS[simIdx%SIM_MSGS.length];simIdx++;
+    const res=analyze(m.body);
+    processMsg({id:"sim_"+Date.now(),sender:m.sender,body:m.body,timestamp:new Date().toISOString(),...res,isTest:true});
+  },12000);
+}
+
+/* Simulasi toggle — bisa aktif bersama koneksi nyata */
+function toggleSimMode(){
+  const btn=g("simBtn");
+  if(simTimer){
+    // matikan simulasi
+    clearInterval(simTimer);simTimer=null;
+    if(btn){btn.classList.remove("active");btn.textContent="🔄 Simulasi";}
+    // hanya update status jika memang sedang di mode simulasi
+    const dotCls=g("connDot").className;
+    if(dotCls.includes("simulating"))setConn("","Status: <b>Terputus</b>");
+    toast("Simulasi Dihentikan","Mode demo dimatikan","low");
+  } else {
+    startSimMode(true); // forced=true bypass guard
+    if(btn){btn.classList.add("active");btn.textContent="⏹ Stop Sim";}
+  }
+}
+/* WebSocket */
+function connectWS(){
+  setConn("connecting","Status: <b>Menghubungkan...</b>");
+  try{
+    const url=cfg.url+(cfg.url.includes("?")?"&token=":"?token=")+encodeURIComponent(cfg.key);
+    ws=new WebSocket(url);
+    ws.onopen=()=>{
+      setConn("connected","Status: <b style='color:var(--ok)'>Terhubung ⚡ Real-time</b>");
+      setApiSt("✅ WebSocket aktif: "+cfg.url);
+      toast("Terhubung ke Server","Monitoring SMS real-time aktif 🛡","low");
+    };
+    ws.onmessage=(ev)=>{
+      try{const d=JSON.parse(ev.data);(Array.isArray(d)?d:[d]).forEach(m=>{if(!seenIds.has(m.id)){seenIds.add(m.id);processMsg(m);}});}catch(e){}
+    };
+    ws.onerror=()=>{setConn("error","Status: <b style='color:var(--danger)'>Error Koneksi</b>");setApiSt("❌ WS error — akan coba lagi...");};
+    ws.onclose=()=>{
+      if(userDisconnected){ws=null;return;}
+      setConn("","Status: <b>Koneksi Terputus — mencoba ulang...</b>");ws=null;
+      setTimeout(()=>{if(cfg.url&&!ws&&!pollTimer&&!userDisconnected)connectAPI();},6000);
+    };
+  }catch(e){setConn("error","Status: <b>Gagal Terhubung</b>");setApiSt("❌ "+e.message);}
+}
+
+/* HTTP Polling */
+async function startPoll(){
+  setConn("connected","Status: <b style='color:var(--ok)'>Polling HTTP (setiap "+cfg.interval+"s)</b>");
+  await doPoll();
+  pollTimer=setInterval(doPoll,cfg.interval*1000);
+}
+async function doPoll(){
+  const base=cfg.url.replace(/^ws:/,"http:").replace(/^wss:/,"https:").replace(/\/ws$/,"").replace(/\/api.*/,"");
+  try{
+    const headers={"Authorization":"Bearer "+cfg.key};
+    const url=base+"/api/sms/latest?since="+encodeURIComponent(lastPoll);
+    const r=await fetch(url,{headers,signal:AbortSignal.timeout(8000)});
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    const data=await r.json();
+    lastPoll=new Date().toISOString();
+    if(Array.isArray(data))data.forEach(m=>{if(!seenIds.has(m.id)){seenIds.add(m.id);processMsg(m);}});
+    setApiSt("✅ Terakhir periksa: "+new Date().toLocaleTimeString()+" | "+(Array.isArray(data)?data.length:0)+" pesan baru");
+  }catch(e){
+    setConn("error","Status: <b style='color:var(--danger)'>Gagal Periksa</b>");
+    setApiSt("❌ "+e.message+" — pastikan server berjalan");
+  }
+}
+
+/* Send Test */
+async function sendTest(){
+  if(cfg.url){
+    try{
+      const base=cfg.url.replace(/^ws:/,"http:").replace(/^wss:/,"https:").replace(/\/ws$/,"").replace(/\/api.*/,"");
+      const r=await fetch(base+"/api/sms/test",{method:"POST",headers:{"Content-Type":"application/json"},signal:AbortSignal.timeout(4000)});
+      if(r.ok){setApiSt("🧪 Pesan uji dikirim ke server → "+new Date().toLocaleTimeString());return;}
+    }catch(e){}
+  }
+  // fallback simulasi lokal
+  const m=SIM_MSGS[simIdx%SIM_MSGS.length];simIdx++;
+  const res=analyze(m.body);
+  processMsg({id:"local_"+Date.now(),sender:m.sender,body:m.body,timestamp:new Date().toISOString(),...res,isTest:true});
+  setApiSt("🧪 Uji lokal: "+m.sender+" ("+new Date().toLocaleTimeString()+")");
+}
+
+/* ─── PROCESS MSG ─── */
+function processMsg(msg){
+  let{riskLevel,score,status,keywords}=msg;
+  if(!riskLevel){const r=analyze(msg.body||"");riskLevel=r.riskLevel;score=r.score;status=r.status;keywords=r.found;}
+  totalC++;g("connCount").textContent=totalC+" pesan";
+  if(riskLevel==="high")highC++;else if(riskLevel==="medium")medC++;else lowC++;
+  updateChart();
+  addLog("[AUTO] "+msg.sender+" → "+(status||riskLevel.toUpperCase()),riskLevel==="high"?"#ff4d4d":riskLevel==="medium"?"#ffcc00":"#00ff88");
+  if(score>=cfg.minRisk){
+    showPopup({sender:msg.sender,body:msg.body,score,status:status||"",keywords:keywords||[],riskLevel,timestamp:msg.timestamp});
+    toast(status||riskLevel.toUpperCase(),"📱 "+msg.sender,riskLevel);
+    notifyOS(msg.sender,status||riskLevel.toUpperCase());
+  }
+}
+
+/* ─── MANUAL SCAN ─── */
+function manualScan(){
+  const text=g("inputText").value;
+  if(!text.trim())return;
+  const res=analyze(text);
+  const bar=g("scanBar");bar.style.width="0";
+  setTimeout(()=>{bar.style.width=Math.min(res.score,100)+"%";},50);
+  const rb=g("resultBox");
+  rb.className=res.score>=60?"result-box risk-high":res.score>=30?"result-box risk-medium":"result-box risk-low";
+  rb.innerHTML="Skor: <strong>"+res.score+"</strong> → "+res.status;
+  if(res.score>=60){highC++;showPopup({sender:"Scan Manual",body:text,score:res.score,status:res.status,keywords:res.found,riskLevel:"high",timestamp:new Date().toISOString()});notifyOS("Manual",res.status);}
+  else if(res.score>=30)medC++;else lowC++;
+  updateChart();
+  addLog("[MANUAL] "+res.status,res.score>=60?"#ff4d4d":res.score>=30?"#ffcc00":"#00ff88");
+  saveLog(res.status);
+}
+
+/* ─── ANALYZE ─── */
+function analyze(text){
+  const t=(text||"").toLowerCase();let score=0;const found=[];
+  KW.forEach(k=>{if(t.includes(k)){score+=15;found.push(k);}});
+  BD.forEach(d=>{if(t.includes(d)){score+=25;found.push(d);}});
+  if(t.match(/https?:\/\//))score+=20;
+  if(t.match(/\d{4,6}/)&&t.includes("otp"))score+=30;else if(t.match(/\d{4,6}/))score+=10;
+  const riskLevel=score>=60?"high":score>=30?"medium":"low";
+  const status=score>=60?"HIGH RISK — Kemungkinan Phishing / Hack WA!":score>=30?"MEDIUM RISK — Perlu waspada.":"LOW RISK — Pesan aman.";
+  return{score,riskLevel,status,found:[...new Set(found)]};
+}
+
+/* ─── CHART ─── */
+const chart=new Chart(g("attackChart").getContext("2d"),{
+  type:"bar",
+  data:{labels:["Bahaya","Waspada","Aman"],datasets:[{label:"Deteksi",data:[0,0,0],backgroundColor:["rgba(255,77,77,.75)","rgba(255,204,0,.75)","rgba(0,255,136,.75)"],borderColor:["#ff4d4d","#ffcc00","#00ff88"],borderWidth:1,borderRadius:6}]},
+  options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:"white",font:{family:"Poppins",size:11}}}},scales:{x:{ticks:{color:"white",font:{size:10}},grid:{color:"rgba(255,255,255,0.04)"}},y:{ticks:{color:"white",font:{size:10}},grid:{color:"rgba(255,255,255,0.04)"},beginAtZero:true}}}
+});
+function updateChart(){
+  chart.data.datasets[0].data=[highC,medC,lowC];chart.update();
+  g("sHigh").textContent=highC;g("sMed").textContent=medC;g("sLow").textContent=lowC;
+}
+
+/* ─── LOG ─── */
+function addLog(msg,color){
+  const t=new Date().toLocaleTimeString(),lb=g("logBox");
+  const c=color||(msg.includes("HIGH")?"#ff4d4d":msg.includes("MEDIUM")?"#ffcc00":"#00ff88");
+  lb.innerHTML+=`<span style="color:${c}">[${t}] ${esc(msg)}</span><br/>`;
+  lb.scrollTop=lb.scrollHeight;
+}
+function saveLog(msg){try{const l=JSON.parse(localStorage.getItem("ss_logs")||"[]");l.push({time:new Date().toLocaleTimeString(),msg});if(l.length>300)l.shift();localStorage.setItem("ss_logs",JSON.stringify(l));}catch(e){}}
+function loadLogs(){try{const l=JSON.parse(localStorage.getItem("ss_logs")||"[]");if(!l.length)return;g("logBox").innerHTML="";l.forEach(x=>addLog(x.msg));}catch(e){}}
+function notifyOS(sender,status){
+  if(Notification.permission==="granted")new Notification("⚠ SeniorShield Alert",{body:sender+"\n"+status});
+  else if(Notification.permission!=="denied")Notification.requestPermission();
+}
+function setConn(dc,html){g("connDot").className="conn-dot"+(dc?" "+dc:"");g("connText").innerHTML=html;}
+
+/* ─── POPUP ─── */
+function showPopup({sender,body,score,status,keywords,riskLevel,timestamp}){
+  const id="p"+Date.now();
+  const t=timestamp?new Date(timestamp).toLocaleTimeString():new Date().toLocaleTimeString();
+  const kw=(keywords||[]).slice(0,8).map(k=>`<span class="popup-kw">${esc(k)}</span>`).join("");
+  const _pEl=document.createElement('div');
+  _pEl.id=id;
+  _pEl.className='popup-overlay';
+  _pEl.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;z-index:99998;background:rgba(0,0,0,.88);display:flex;align-items:flex-end;justify-content:center;';
+  _pEl.addEventListener('click',e=>{if(e.target===_pEl)closePop(id);});
+  _pEl.innerHTML=`<div class="popup-box ${riskLevel}">
+      <span class="popup-handle"></span>
+      <div class="popup-head">
+        <div class="popup-head-row">
+          <span class="popup-ico">${riskLevel==="high"?"🚨":"⚠️"}</span>
+          <div>
+            <div class="popup-title">${riskLevel==="high"?"PESAN BERBAHAYA!":"PERLU DIWASPADAI"}</div>
+            <div class="popup-sub">SeniorShield mendeteksi ancaman</div>
+          </div>
+        </div>
+        <button class="popup-x" onclick="closePop('${id}')">✕</button>
+      </div>
+      <div class="popup-body">
+        <div class="popup-sender-row">
+          <div class="popup-avatar">📱</div>
+          <div><div class="popup-sender-name">${esc(sender)}</div><div class="popup-sender-time">${t}</div></div>
+        </div>
+        <div class="popup-msg">${esc(body)}</div>
+        <div class="popup-badge ${riskLevel}">${riskLevel==="high"?"🔴 BERBAHAYA":"🟡 MENCURIGAKAN"}</div>
+        <div class="popup-score">Skor Ancaman: <strong>${score}</strong> poin</div>
+        ${kw?`<div class="popup-kws">${kw}</div>`:""}
+        <div class="popup-acts">
+          <button class="pbtn-ok"    onclick="closePop('${id}')">✓ Mengerti</button>
+          <button class="pbtn-block" onclick="blockSender('${id}','${esc(sender)}')">🚫 Blokir</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(_pEl);
+}
+function closePop(id){const el=g(id);if(el){el.style.opacity="0";el.style.transition="opacity .2s";setTimeout(()=>el.remove(),200);}}
+function closePopOut(e,id){if(e.target.id===id)closePop(id);}
+function blockSender(id,sender){closePop(id);addLog("[BLOKIR] "+sender+" ditandai berbahaya","#ff4d4d");toast("Nomor Diblokir",sender+" ditandai berbahaya","high");}
+
+/* ─── TOAST ─── */
+function toast(title,msg,level){
+  const icon=level==="high"?"🚨":level==="medium"?"⚠️":"✅";
+  const id="t"+Date.now();
+  g("toastWrap").insertAdjacentHTML("beforeend",`
+  <div class="toast ${level}" id="${id}" onclick="rmToast('${id}')">
+    <span class="toast-icon">${icon}</span>
+    <div class="toast-body">
+      <div class="toast-title">${esc(title)}</div>
+      <div class="toast-msg">${esc((msg||"").substring(0,55)+((msg||"").length>55?"...":""))}</div>
+      <div class="toast-time">${new Date().toLocaleTimeString()}</div>
+    </div>
+    <button class="toast-x" onclick="rmToast('${id}')">✕</button>
+  </div>`);
+  setTimeout(()=>rmToast(id),7000);
+}
+function rmToast(id){const el=g(id);if(el){el.style.animation="toastOut .3s ease forwards";setTimeout(()=>el.remove(),300);}}
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+/* ─── AUTO-START: jika tidak ada config tersimpan, langsung simulasi ─── */
+document.addEventListener("DOMContentLoaded",()=>{
+  // Will be called after showDashboard() — delay handled there
+});
+</script>
+</body>
+</html>
