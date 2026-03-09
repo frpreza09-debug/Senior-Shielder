@@ -20,12 +20,11 @@
 @media(min-width:1280px){:root{--px:96px;}}
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;overflow-x:clip;-webkit-tap-highlight-color:transparent;}
-#root-clip{max-width:100vw;overflow-x:clip;}
+body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;-webkit-tap-highlight-color:transparent;}
 .hidden{display:none!important;}
 
 /* ═══════════ SHARED HEADER ═══════════ */
-.site-header{display:flex;justify-content:space-between;align-items:center;padding:14px var(--px);background:#080e1c;border-bottom:1px solid rgba(0,242,255,.1);position:sticky;top:0;z-index:400;}
+.site-header{display:flex;justify-content:space-between;align-items:center;padding:14px var(--px);background:#080e1c;border-bottom:1px solid rgba(0,242,255,.1);position:sticky;top:0;z-index:100;}
 .logo{font-size:clamp(14px,4.5vw,20px);font-weight:800;color:var(--cyan);letter-spacing:2px;font-family:'Syne',sans-serif;flex:1;min-width:0;}
 .nav-btn{background:none;border:1.5px solid var(--cyan);color:var(--cyan);padding:7px 18px;border-radius:20px;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:600;font-size:13px;transition:.2s;white-space:nowrap;min-height:38px;}
 .nav-btn:hover{background:var(--cyan);color:#080e1c;}
@@ -75,8 +74,8 @@ body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;ove
 .btn-nfc:disabled{opacity:.4;cursor:not-allowed;}
 
 /* ═══════════ DASHBOARD ═══════════ */
-#dashboard{display:flex;flex-direction:column;min-height:100svh;animation:fadeUp .4s ease;}
-.dash-header{display:flex;justify-content:space-between;align-items:center;padding:0 var(--px);background:#0d1829;height:56px;border-bottom:1px solid rgba(0,242,255,.08);position:sticky;top:0;z-index:400;gap:10px;flex-shrink:0;}
+#dashboard{display:flex;flex-direction:column;min-height:100svh;animation:dashIn .4s ease;}
+.dash-header{display:flex;justify-content:space-between;align-items:center;padding:0 var(--px);background:#0d1829;height:56px;border-bottom:1px solid rgba(0,242,255,.08);position:sticky;top:0;z-index:100;gap:10px;flex-shrink:0;}
 .dash-logo{font-weight:800;color:var(--cyan);font-family:'Syne',sans-serif;font-size:clamp(10px,2.8vw,15px);display:flex;align-items:center;gap:8px;min-width:0;flex:1;letter-spacing:.3px;}
 .dash-right{display:flex;align-items:center;gap:7px;flex-shrink:0;}
 .dash-btn{background:none;border:1.5px solid rgba(0,242,255,.4);color:var(--cyan);padding:6px 12px;border-radius:16px;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:600;font-size:12px;transition:.2s;white-space:nowrap;min-height:34px;}
@@ -225,9 +224,9 @@ body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;ove
 .wa-card canvas{background:#060d1a;border-radius:10px;padding:8px;width:100%!important;}
 
 /* ═══════════ TUTORIAL — FULLSCREEN ═══════════ */
-#tutorialPage{position:fixed;left:0;right:0;top:0;bottom:0;z-index:9999;background:var(--bg);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;}
+#tutorialPage{position:fixed;left:0;right:0;top:0;bottom:0;z-index:500;background:var(--bg);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;}
 
-.tut-header{display:flex;align-items:center;justify-content:space-between;padding:14px var(--px);background:#080e1c;border-bottom:1px solid rgba(0,242,255,.1);position:sticky;top:0;z-index:10;}
+.tut-header{display:flex;align-items:center;justify-content:space-between;padding:14px var(--px);background:#080e1c;border-bottom:1px solid rgba(0,242,255,.1);position:sticky;top:0;z-index:100;}
 .tut-header-left{display:flex;align-items:center;gap:12px;}
 .tut-title{font-family:'Syne',sans-serif;font-size:clamp(14px,4vw,18px);font-weight:800;color:var(--cyan);}
 .tut-mode-toggle{display:flex;gap:4px;background:var(--surface);border-radius:20px;padding:4px;}
@@ -250,6 +249,7 @@ body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;ove
 .wz-slide{display:none;animation:fadeUp .35s ease;}
 .wz-slide.active{display:block;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+@keyframes dashIn{from{opacity:0;}to{opacity:1;}}
 
 .wz-emoji{text-align:center;font-size:clamp(60px,14vw,80px);padding:32px 20px 8px;line-height:1;}
 .wz-main-title{text-align:center;font-family:'Syne',sans-serif;font-size:clamp(22px,5.5vw,30px);font-weight:800;color:var(--text);padding:0 20px 10px;line-height:1.2;}
@@ -359,12 +359,13 @@ body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;ove
 .endpoint-desc{font-size:12px;color:var(--muted);line-height:1.6;}
 
 /* ═══════════ POPUP ═══════════ */
-.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);display:flex;align-items:flex-end;justify-content:center;z-index:99998;animation:overlayIn .2s ease;}
 @keyframes overlayIn{from{opacity:0;}to{opacity:1;}}
+@media(min-width:600px){}
+.popup-overlay{position:fixed;left:0;top:0;width:100%;height:100%;z-index:2147483646;background:rgba(0,0,0,.88);display:flex;align-items:flex-end;justify-content:center;}
 @media(min-width:600px){.popup-overlay{align-items:center;padding:20px;}}
-.popup-box{background:#0d1829;width:100%;max-width:480px;border:1px solid rgba(255,77,77,.35);box-shadow:0 0 80px rgba(255,77,77,.18),0 30px 60px rgba(0,0,0,.7);overflow:hidden;border-radius:22px 22px 0 0;animation:sheetUp .35s cubic-bezier(.32,1,.32,1);}
-@keyframes sheetUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
-@media(min-width:600px){.popup-box{border-radius:22px;animation:popIn .3s cubic-bezier(.34,1.56,.64,1);}@keyframes popIn{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:scale(1);}}}
+.popup-box{background:#0d1829;width:100%;max-width:480px;border:1px solid rgba(255,77,77,.35);box-shadow:0 0 80px rgba(255,77,77,.18),0 30px 60px rgba(0,0,0,.7);overflow:hidden;border-radius:22px 22px 0 0;}
+
+@media(min-width:600px){.popup-box{border-radius:22px;}}
 .popup-handle{width:36px;height:4px;background:rgba(255,255,255,.12);border-radius:2px;margin:10px auto 0;}
 @media(min-width:600px){.popup-handle{display:none;}}
 .popup-box.medium{border-color:rgba(255,204,0,.35);}
@@ -376,7 +377,7 @@ body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;ove
 .popup-title{font-family:'Syne',sans-serif;font-size:clamp(14px,4vw,18px);font-weight:800;color:var(--danger);}
 .popup-box.medium .popup-title{color:var(--warn);}
 .popup-sub{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px;}
-.popup-x{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.07);border:none;color:var(--muted);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:.2s;}
+.popup-x{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.07);border:none;color:var(--muted);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:.2s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 .popup-x:hover{background:rgba(255,77,77,.2);color:var(--danger);}
 .popup-body{padding:16px 20px 20px;}
 .popup-sender-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
@@ -391,9 +392,9 @@ body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;ove
 .popup-kws{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;}
 .popup-kw{background:rgba(255,77,77,.07);border:1px solid rgba(255,77,77,.18);color:#fca5a5;padding:2px 9px;border-radius:20px;font-size:10px;font-family:'JetBrains Mono',monospace;}
 .popup-acts{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
-.pbtn-ok{padding:12px;background:var(--surface);border:1px solid rgba(255,255,255,.08);border-radius:11px;color:var(--muted);font-family:'Poppins',sans-serif;font-weight:600;font-size:13px;cursor:pointer;transition:.2s;min-height:46px;}
+.pbtn-ok{padding:12px;background:var(--surface);border:1px solid rgba(255,255,255,.08);border-radius:11px;color:var(--muted);font-family:'Poppins',sans-serif;font-weight:600;font-size:13px;cursor:pointer;transition:.2s;min-height:46px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 .pbtn-ok:hover{background:#1a2540;color:var(--text);}
-.pbtn-block{padding:12px;background:rgba(255,77,77,.1);border:1px solid rgba(255,77,77,.25);border-radius:11px;color:var(--danger);font-family:'Poppins',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:.2s;min-height:46px;}
+.pbtn-block{padding:12px;background:rgba(255,77,77,.1);border:1px solid rgba(255,77,77,.25);border-radius:11px;color:var(--danger);font-family:'Poppins',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:.2s;min-height:46px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 .pbtn-block:hover{background:rgba(255,77,77,.2);}
 
 /* ═══════════ TOAST ═══════════ */
@@ -425,11 +426,7 @@ body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;ove
   .marquee-wrap{mask-image:none;overflow:visible;}
   .marquee-inner{animation:none;}
 }
-/* ═══ POPUP FIX MOBILE ═══ */
-.popup-overlay{position:fixed;left:0;right:0;top:0;bottom:0;background:rgba(0,0,0,.88);display:flex;align-items:flex-end;justify-content:center;z-index:99998;}
-@media(min-width:600px){.popup-overlay{align-items:center;padding:20px;}}
-.popup-box{touch-action:manipulation;}
-.pbtn-ok,.pbtn-block{touch-action:manipulation;-webkit-tap-highlight-color:transparent;cursor:pointer;}
+
 /* ═══ SIMULASI BUTTON ═══ */
 .cbtn-sim{border-color:#00f2ff;color:#00f2ff;background:rgba(0,242,255,.08);}
 .cbtn-sim.active{background:rgba(0,242,255,.2);box-shadow:0 0 10px rgba(0,242,255,.3);}
@@ -1028,16 +1025,8 @@ function showDashboard(){
       // Auto-connect setelah 800ms
       setTimeout(()=>{connectAPI();toast("Monitor Otomatis Dimulai","Memantau SMS secara real-time 🛡","low");},800);
     } else {
-      // Belum ada konfigurasi → langsung simulasi otomatis setelah 2 detik
-      setTimeout(()=>{
-        startSimMode();
-        // Juga buka panel API dengan sedikit delay supaya user tahu harus isi URL
-        setTimeout(()=>{
-          g("apiPanel").classList.remove("hidden");
-          runDemo();
-          toast("💡 Belum ada server?","Klik ⚙ Pengaturan API → isi URL server Anda","low");
-        },1500);
-      },2000);
+      // Tidak ada konfigurasi — tunggu user klik tombol sendiri
+      toast("💡 Belum dikonfigurasi","Klik ⚙ untuk atur server, atau ⚡ Simulasi untuk demo","low");
     }
   }catch(e){}
 }
@@ -1253,8 +1242,8 @@ async function pingServer(){
 /* ─── CONNECT ─── */
 function connectAPI(){userDisconnected=false;
   if(!cfg.url){
-    // No URL → fallback ke mode simulasi otomatis
-    startSimMode();
+    // No URL → jangan auto-sim, user harus klik sendiri
+    toast("⚙ Server belum diatur","Isi URL server di Pengaturan API, atau klik Simulasi","medium");
     return;
   }
   disconnectAPI();
@@ -1400,12 +1389,21 @@ function manualScan(){
   const bar=g("scanBar");bar.style.width="0";
   setTimeout(()=>{bar.style.width=Math.min(res.score,100)+"%";},50);
   const rb=g("resultBox");
-  rb.className=res.score>=60?"result-box risk-high":res.score>=30?"result-box risk-medium":"result-box risk-low";
+  const rl=res.score>=60?"high":res.score>=30?"medium":"low";
+  rb.className="result-box risk-"+rl;
   rb.innerHTML="Skor: <strong>"+res.score+"</strong> → "+res.status;
-  if(res.score>=60){highC++;showPopup({sender:"Scan Manual",body:text,score:res.score,status:res.status,keywords:res.found,riskLevel:"high",timestamp:new Date().toISOString()});notifyOS("Manual",res.status);}
-  else if(res.score>=30)medC++;else lowC++;
+  if(rl==="high"){
+    highC++;
+    showPopup({sender:"Scan Manual",body:text,score:res.score,status:res.status,keywords:res.found,riskLevel:"high",timestamp:new Date().toISOString()});
+    notifyOS("Manual",res.status);
+  } else if(rl==="medium"){
+    medC++;
+    showPopup({sender:"Scan Manual",body:text,score:res.score,status:res.status,keywords:res.found,riskLevel:"medium",timestamp:new Date().toISOString()});
+  } else {
+    lowC++;
+  }
   updateChart();
-  addLog("[MANUAL] "+res.status,res.score>=60?"#ff4d4d":res.score>=30?"#ffcc00":"#00ff88");
+  addLog("[MANUAL] "+res.status,rl==="high"?"#ff4d4d":rl==="medium"?"#ffcc00":"#00ff88");
   saveLog(res.status);
 }
 
@@ -1452,41 +1450,87 @@ function showPopup({sender,body,score,status,keywords,riskLevel,timestamp}){
   const id="p"+Date.now();
   const t=timestamp?new Date(timestamp).toLocaleTimeString():new Date().toLocaleTimeString();
   const kw=(keywords||[]).slice(0,8).map(k=>`<span class="popup-kw">${esc(k)}</span>`).join("");
-  const _pEl=document.createElement('div');
-  _pEl.id=id;
-  _pEl.className='popup-overlay';
-  _pEl.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;z-index:99998;background:rgba(0,0,0,.88);display:flex;align-items:flex-end;justify-content:center;';
-  _pEl.addEventListener('click',e=>{if(e.target===_pEl)closePop(id);});
-  _pEl.innerHTML=`<div class="popup-box ${riskLevel}">
-      <span class="popup-handle"></span>
-      <div class="popup-head">
-        <div class="popup-head-row">
-          <span class="popup-ico">${riskLevel==="high"?"🚨":"⚠️"}</span>
-          <div>
-            <div class="popup-title">${riskLevel==="high"?"PESAN BERBAHAYA!":"PERLU DIWASPADAI"}</div>
-            <div class="popup-sub">SeniorShield mendeteksi ancaman</div>
-          </div>
-        </div>
-        <button class="popup-x" onclick="closePop('${id}')">✕</button>
-      </div>
-      <div class="popup-body">
-        <div class="popup-sender-row">
-          <div class="popup-avatar">📱</div>
-          <div><div class="popup-sender-name">${esc(sender)}</div><div class="popup-sender-time">${t}</div></div>
-        </div>
-        <div class="popup-msg">${esc(body)}</div>
-        <div class="popup-badge ${riskLevel}">${riskLevel==="high"?"🔴 BERBAHAYA":"🟡 MENCURIGAKAN"}</div>
-        <div class="popup-score">Skor Ancaman: <strong>${score}</strong> poin</div>
-        ${kw?`<div class="popup-kws">${kw}</div>`:""}
-        <div class="popup-acts">
-          <button class="pbtn-ok"    onclick="closePop('${id}')">✓ Mengerti</button>
-          <button class="pbtn-block" onclick="blockSender('${id}','${esc(sender)}')">🚫 Blokir</button>
-        </div>
-      </div>
-    </div>`;
-  document.body.appendChild(_pEl);
+  const isHigh=riskLevel==="high";
+
+  /* Overlay: langsung ke body, inline style penuh — bypass semua stacking context */
+  const overlay=document.createElement("div");
+  overlay.id=id;
+  overlay.style.cssText=
+    "position:fixed;left:0;top:0;width:100%;height:100%;"+
+    "z-index:2147483647;"+
+    "background:rgba(0,0,0,.88);"+
+    "display:flex;align-items:flex-end;justify-content:center;";
+
+  /* Konten popup */
+  const box=document.createElement("div");
+  box.className="popup-box"+(isHigh?"":" medium");
+  box.style.cssText="position:relative;";
+  box.innerHTML=
+    `<span class="popup-handle"></span>`+
+    `<div class="popup-head">`+
+      `<div class="popup-head-row">`+
+        `<span class="popup-ico">${isHigh?"🚨":"⚠️"}</span>`+
+        `<div>`+
+          `<div class="popup-title">${isHigh?"PESAN BERBAHAYA!":"PERLU DIWASPADAI"}</div>`+
+          `<div class="popup-sub">SeniorShield mendeteksi ancaman</div>`+
+        `</div>`+
+      `</div>`+
+      `<button class="popup-x" id="${id}_x" aria-label="Tutup">✕</button>`+
+    `</div>`+
+    `<div class="popup-body">`+
+      `<div class="popup-sender-row">`+
+        `<div class="popup-avatar">📱</div>`+
+        `<div>`+
+          `<div class="popup-sender-name">${esc(sender)}</div>`+
+          `<div class="popup-sender-time">${t}</div>`+
+        `</div>`+
+      `</div>`+
+      `<div class="popup-msg">${esc(body)}</div>`+
+      `<div class="popup-badge ${riskLevel}">${isHigh?"🔴 BERBAHAYA":"🟡 MENCURIGAKAN"}</div>`+
+      `<div class="popup-score">Skor Ancaman: <strong>${score}</strong> poin</div>`+
+      (kw?`<div class="popup-kws">${kw}</div>`:"")+
+      `<div class="popup-acts">`+
+        `<button class="pbtn-ok" id="${id}_ok">✓ Mengerti</button>`+
+        `<button class="pbtn-block" id="${id}_blk">🚫 Blokir</button>`+
+      `</div>`+
+    `</div>`;
+
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  /* Desktop: tengah */
+  if(window.innerWidth>=600){
+    overlay.style.alignItems="center";
+    overlay.style.padding="20px";
+  }
+
+  /* ── Satu event handler terpusat — aman di Android & iOS ── */
+  function handleClose(){closePop(id);}
+  function handleBlock(){
+    closePop(id);
+    addLog("[BLOKIR] "+sender+" ditandai berbahaya","#ff4d4d");
+    toast("Nomor Diblokir",sender+" ditandai berbahaya","high");
+  }
+
+  /* Klik luar box (overlay) */
+  overlay.addEventListener("click",function(e){
+    if(e.target===overlay) handleClose();
+  });
+  /* Tombol ✕ */
+  document.getElementById(id+"_x").addEventListener("click",function(e){
+    e.stopPropagation(); handleClose();
+  });
+  /* Tombol ✓ Mengerti */
+  document.getElementById(id+"_ok").addEventListener("click",function(e){
+    e.stopPropagation(); handleClose();
+  });
+  /* Tombol 🚫 Blokir */
+  document.getElementById(id+"_blk").addEventListener("click",function(e){
+    e.stopPropagation(); handleBlock();
+  });
 }
-function closePop(id){const el=g(id);if(el){el.style.opacity="0";el.style.transition="opacity .2s";setTimeout(()=>el.remove(),200);}}
+
+function closePop(id){const el=g(id);if(!el)return;el.style.transition="opacity .18s ease";el.style.opacity="0";setTimeout(()=>{if(el.parentNode)el.parentNode.removeChild(el);},200);}
 function closePopOut(e,id){if(e.target.id===id)closePop(id);}
 function blockSender(id,sender){closePop(id);addLog("[BLOKIR] "+sender+" ditandai berbahaya","#ff4d4d");toast("Nomor Diblokir",sender+" ditandai berbahaya","high");}
 
