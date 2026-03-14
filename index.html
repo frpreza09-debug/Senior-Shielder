@@ -975,7 +975,7 @@ node_modules/</div></div></div>
 <!-- ════════════════════════════ JS ════════════════════════════ -->
 <script>
 /* ─── DATABASES ─── */
-const NFC_DB=[{uid:"04:a3:b2:c1",name:"Admin Utama"},{uid:"04:12:34:56",name:"Staff 1"},{uid:"04:ab:cd:ef",name:"Staff 2"}];
+const NFC_DB=[{uid:"04:a3:b2:c1",name:"Admin Utama"},{uid:"04:12:34:56",name:"Staff 1"},{uid:"04:ab:cd:ef",name:"Staff 2"},{uid:"01:0b:55:5d",name:"Kartu 1"},{uid:"f1:d7:3c:5c",name:"Kartu 2"},{uid:"f1:4e:54:5c",name:"Kartu 3"},{uid:"f1:87:50:5c",name:"Kartu 4"},{uid:"01:30:da:5d",name:"Kartu 5"}];
 const USER_DB=[{username:"admin",password:"1234"},{username:"seniorshield",password:"sahabatselamanya"}];
 const KW=["hadiah","klik link","verifikasi akun","akun diblokir","transfer sekarang","menang undian","gratis saldo","bank","pin","otp","kode verifikasi","whatsapp support","login dari perangkat baru","reset password","data anda","segera","urgent","konfirmasi","perangkat baru","terkena hack","kode rahasia","jangan beritahu","transfer dana","rekening"];
 const BD=[".xyz",".top",".click",".gq",".ru",".tk",".cf",".ml",".ga"];
@@ -1070,7 +1070,6 @@ async function startNFC(){
   }
 }
 function setNS(s){g("nfcRings").className="nfc-rings"+(s?" "+s:"");g("nfcBadge").className="nfc-badge"+(s?" "+s:"");}
-
 /* ─── TUTORIAL ─── */
 function openTutorial(){
   g("apiPanel").classList.add("hidden");
